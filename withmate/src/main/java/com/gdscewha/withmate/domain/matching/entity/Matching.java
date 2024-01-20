@@ -25,6 +25,9 @@ public class Matching {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+//    @Column(name = "ageGroup") // 추후 나잇대
+//    private Enum ageGroup;
+
     @OneToOne
     @JoinColumn(name = "memberId")
     private Member member;

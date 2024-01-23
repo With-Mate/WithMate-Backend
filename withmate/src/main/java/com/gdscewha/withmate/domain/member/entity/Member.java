@@ -1,7 +1,10 @@
 package com.gdscewha.withmate.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -29,16 +32,18 @@ public class Member {
     private String email;
 
     @Column(nullable = false, name = "birth")
-    private Long birth;
+    private String birth;
 
     @Column(nullable = false, name = "nationality")
     private String nationality;
 
     @Column(nullable = false, name = "regDate")
-    private Long regDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
+    private LocalDate regDate;
 
     @Column(nullable = false, name = "loginDate")
-    private Long loginDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
+    private LocalDate loginDate;
 
     @Column(nullable = false, name = "isRelationed")
     private Boolean isRelationed;

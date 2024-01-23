@@ -18,7 +18,7 @@ public class Sticker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "weekId")
+    @Column(name = "stickerId")
     private Long id;
 
     @Column(nullable = false, name = "stickerNum")

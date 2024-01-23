@@ -14,5 +14,5 @@ public class MemberSettingsDto {
     private String nickname;
     private String email;
     private String birth;
-    private String nationality;
+    private String country;
 }

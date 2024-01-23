@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberProfileDto {
     private String nickname;
-    private String nationality;
+    private String country;
     private String regDate;
     private String loginDate;
 }

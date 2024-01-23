@@ -35,8 +35,8 @@ public class Member {
     @Column(nullable = false, name = "birth")
     private String birth;
 
-    @Column(nullable = false, name = "nationality")
-    private String nationality;
+    @Column(nullable = false, name = "country")
+    private String country;
 
     @Column(nullable = false, name = "regDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")

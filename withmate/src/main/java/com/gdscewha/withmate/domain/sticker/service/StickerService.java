@@ -2,6 +2,8 @@ package com.gdscewha.withmate.domain.sticker.service;
 
 import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.sticker.dto.CreateStickerDTO;
+import com.gdscewha.withmate.domain.sticker.dto.UpdateStickerDTO;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import com.gdscewha.withmate.domain.week.entity.Week;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,29 +21,32 @@ public class StickerService {
     private final StickerRepository stickerRepository;
     private final WeekRepository weekRepository;
 
-    // 나와 메이트의 스티커 내용 조회
+    // 나와 메이트의 스티커 내용 조회 메소드
+    // 멤버relation-mate-journey-week-sticker 이렇게 엔티티를 타고타고 가서 조회할 수 없을까?
 
 
 
 
-    //스티커의 week를 조회하는 메소드
+    // 스티커의 week를 조회하는 메소드
     private Week getCurrentWeek() {
-        //  Member로 jouney찾고 weeknum 찾는 메소드 중간
+        //   TODO: Member로 jouney찾고 weeknum 찾는 메소드 중간
         // 그럼 그거로 뭔가 week를 반환
         // return weekRepository.findById(week.getId())
         //        .orElseThrow(() -> new RuntimeException("현재 주 정보를 찾을 수 없습니다. Week ID: " + week.getId()));
+        return null; //임시....
     }
 
     // 새로운 스티커 생성 메소드(제목, 메모)
-    public Sticker createSticker(Member member, String title, String content, Long stickerNum){
+    // TODO : 스티커 생성 및 수정하는 멤버가 당사자인지 권한 확인 필요
+    public Sticker createSticker(Member member, CreateStickerDTO createStickerDTO) {
         Week currentWeek = getCurrentWeek();
-        LocalDateTime creationTime = LocalDateTime.now(); // creationTime을 내 서버에서 현재 시간으로 초기화. 국적은 나중에..
+        LocalDateTime creationTime = LocalDateTime.now();
 
         Sticker sticker = Sticker.builder()
                 .member(member)
                 .creationTime(LocalDate.from(creationTime))
-                .title(title)
-                .content(content)
+                .title(createStickerDTO.getTitle())
+                .content(createStickerDTO.getContent())
                 .week(currentWeek)
                 .stickerNum(currentWeek.getStickerCount())
                 .build();
@@ -57,22 +61,22 @@ public class StickerService {
     }
 
 
-
     // 있던 스티커 변경 메소드 (제목, 메모, 느낀점)
-    public Sticker updateSticker(Long stickerId, String title, String content, String impression) {
+    // TODO : 스티커 생성 및 수정하는 멤버가 당사자인지 권한 확인 필요
+    public Sticker updateSticker(Long stickerId, UpdateStickerDTO updateStickerDTO) {
         // 스티커 id로 스티커를 찾음
         Sticker existingSticker = validationService.valSticker(stickerId);
+
         // 변경 내용을 set으로 업데이트
-        existingSticker.setTitle(title);
-        existingSticker.setContent(content);
-        existingSticker.setImpression(impression);
+        existingSticker.setTitle(updateStickerDTO.getTitle());
+        existingSticker.setContent(updateStickerDTO.getContent());
+        existingSticker.setImpression(updateStickerDTO.getImpression());
 
         stickerRepository.save(existingSticker);
 
         // 업데이트된 스티커 반환
         return existingSticker;
     }
-
 
 
 

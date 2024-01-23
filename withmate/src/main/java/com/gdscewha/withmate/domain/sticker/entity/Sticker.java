@@ -9,6 +9,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class Sticker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "weekId")
+    @Column(name = "stickerId")
     private Long id;
 
     @Column(nullable = false, name = "stickerNum")

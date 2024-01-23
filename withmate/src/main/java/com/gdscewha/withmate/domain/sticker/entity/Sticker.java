@@ -31,14 +31,14 @@ public class Sticker {
     private String content;
 
     @Column(nullable = false, name = "creationTime")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate creationTime;
 
     @Column(name = "impression")
     private String impression;
 
     @Column(name = "impressionTime")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate impressionTime;
 
     @ManyToOne(fetch = FetchType.EAGER)

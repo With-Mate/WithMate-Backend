@@ -25,9 +25,7 @@ public class StickerService {
 
 
     // 어떠한 멤버의 스티커 내용 조회 메소드
-    // TODO : 나와 메이트 각각 뿌려줘야함
-    // weekId로 나와 메이트의 스티커 내용 조회
-    public List<Sticker> getStickersForThisWeek(Long weekId) {
+    public List<Sticker> getStickersForThisWeek(Long weekId) { // weekId로 나와 메이트의 스티커 내용 조회
         return stickerRepository.findByWeekId(weekId);
     }
 

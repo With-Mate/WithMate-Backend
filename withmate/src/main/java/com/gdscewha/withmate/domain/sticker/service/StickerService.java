@@ -8,11 +8,13 @@ import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import com.gdscewha.withmate.domain.week.entity.Week;
 import com.gdscewha.withmate.domain.week.repository.WeekRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +23,13 @@ public class StickerService {
     private final StickerRepository stickerRepository;
     private final WeekRepository weekRepository;
 
-    // 나와 메이트의 스티커 내용 조회 메소드
-    // 멤버relation-mate-journey-week-sticker 이렇게 엔티티를 타고타고 가서 조회할 수 없을까?
 
-
+    // 어떠한 멤버의 스티커 내용 조회 메소드
+    // TODO : 나와 메이트 각각 뿌려줘야함
+    // weekId로 나와 메이트의 스티커 내용 조회
+    public List<Sticker> getStickersForThisWeek(Long weekId) {
+        return stickerRepository.findByWeekId(weekId);
+    }
 
 
     // 스티커의 week를 조회하는 메소드

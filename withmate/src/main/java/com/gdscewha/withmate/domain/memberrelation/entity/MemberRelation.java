@@ -11,9 +11,10 @@ public class MemberRelation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "memberRelationId")
     private Long id;
 
-    @Column(nullable = false, name = "journeyNum")
+    @Column(nullable = false, name = "goal")
     private String goal;
 
     @Column(nullable = false, name = "category")

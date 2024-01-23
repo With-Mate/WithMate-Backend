@@ -14,7 +14,7 @@ public class Journey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "weekId")
+    @Column(name = "journeyId")
     private Long id;
 
     @Column(nullable = false, name = "journeyNum")

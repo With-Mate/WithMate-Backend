@@ -52,9 +52,9 @@ public class MemberRelationService {
     }
 
     // MR 두 개 만들고 저장
-    /*public void createMemberRelationPair(Relation relation){
+    public void createMemberRelationPair(Relation relation){
         // 나랑 메이트의 Matching 정보를 불러오는 로직이 필요함
-        Matching myMatching = new Matching();
+        /*Matching myMatching = new Matching();
         Matching mateMatching = new Matching();
 
         MemberRelation myMR = MemberRelation.builder()
@@ -72,6 +72,6 @@ public class MemberRelationService {
                 .member(mateMatching.getMember())
                 .relation(relation)
                 .build();
-        mRRepository.save(mateMR);
-    }*/
+        mRRepository.save(mateMR);*/
+    }
 }

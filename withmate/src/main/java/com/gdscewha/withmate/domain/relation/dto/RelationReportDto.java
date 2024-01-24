@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelationBreakDto {
+public class RelationReportDto {
     // 상대방 정보
     private String MateName;
     private String MateCategory;

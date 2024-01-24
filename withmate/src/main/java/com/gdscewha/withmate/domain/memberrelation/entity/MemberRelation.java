@@ -1,12 +1,17 @@
 package com.gdscewha.withmate.domain.memberrelation.entity;
 
-import com.gdscewha.withmate.domain.enums.Category;
+import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Builder
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "member_relation")
 public class MemberRelation {
 
     @Id

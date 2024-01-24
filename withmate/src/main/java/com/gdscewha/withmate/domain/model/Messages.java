@@ -1,4 +1,4 @@
-package com.gdscewha.withmate.domain.enums;
+package com.gdscewha.withmate.domain.model;
 
 public class Messages {
     String[] Messages = {

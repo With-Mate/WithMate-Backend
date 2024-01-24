@@ -1,6 +1,6 @@
 package com.gdscewha.withmate.domain.matching.repository;
 
-import com.gdscewha.withmate.domain.category.Category;
+import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

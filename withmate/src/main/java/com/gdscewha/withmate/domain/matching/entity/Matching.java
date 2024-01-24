@@ -1,6 +1,6 @@
 package com.gdscewha.withmate.domain.matching.entity;
 
-import com.gdscewha.withmate.domain.category.Category;
+import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;

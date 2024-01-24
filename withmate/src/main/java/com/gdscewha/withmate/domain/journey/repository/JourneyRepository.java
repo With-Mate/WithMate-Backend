@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface JourneyRepository extends JpaRepository<Journey, Long> {
     Optional<Journey> findById(Long id);
     List<Journey> findAllByRelation(Relation relation);
+    Optional<Journey> findByRelationAndJourneyNum(Relation relation, Long JourneyNum);
 }

@@ -2,13 +2,12 @@ package com.gdscewha.withmate.domain.sticker.service;
 
 import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.entity.Member;
-import com.gdscewha.withmate.domain.sticker.dto.CreateStickerDTO;
-import com.gdscewha.withmate.domain.sticker.dto.UpdateStickerDTO;
+import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
+import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateDTO;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import com.gdscewha.withmate.domain.week.entity.Week;
 import com.gdscewha.withmate.domain.week.repository.WeekRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +40,15 @@ public class StickerService {
 
     // 새로운 스티커 생성 메소드(제목, 메모)
     // TODO : 스티커 생성 및 수정하는 멤버가 당사자인지 권한 확인 필요
-    public Sticker createSticker(Member member, CreateStickerDTO createStickerDTO) {
+    public Sticker createSticker(Member member, StickerCreateDTO stickerCreateDTO) {
         Week currentWeek = getCurrentWeek();
         LocalDateTime creationTime = LocalDateTime.now();
 
         Sticker sticker = Sticker.builder()
                 .member(member)
                 .creationTime(LocalDate.from(creationTime))
-                .title(createStickerDTO.getTitle())
-                .content(createStickerDTO.getContent())
+                .title(stickerCreateDTO.getTitle())
+                .content(stickerCreateDTO.getContent())
                 .week(currentWeek)
                 .stickerNum(currentWeek.getStickerCount())
                 .build();
@@ -66,35 +65,20 @@ public class StickerService {
 
     // 있던 스티커 변경 메소드 (제목, 메모, 느낀점)
     // TODO : 스티커 생성 및 수정하는 멤버가 당사자인지 권한 확인 필요
-    public Sticker updateSticker(Long stickerId, UpdateStickerDTO updateStickerDTO) {
+    public Sticker updateSticker(StickerUpdateDTO stickerUpdateDTO) {
         // 스티커 id로 스티커를 찾음
-        Sticker existingSticker = validationService.valSticker(stickerId);
+        Sticker existingSticker = validationService.valSticker(stickerUpdateDTO.getId());
 
         // 변경 내용을 set으로 업데이트
-        existingSticker.setTitle(updateStickerDTO.getTitle());
-        existingSticker.setContent(updateStickerDTO.getContent());
-        existingSticker.setImpression(updateStickerDTO.getImpression());
+        existingSticker.setTitle(stickerUpdateDTO.getTitle());
+        existingSticker.setContent(stickerUpdateDTO.getContent());
+        existingSticker.setImpression(stickerUpdateDTO.getImpression());
 
         stickerRepository.save(existingSticker);
 
         // 업데이트된 스티커 반환
         return existingSticker;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

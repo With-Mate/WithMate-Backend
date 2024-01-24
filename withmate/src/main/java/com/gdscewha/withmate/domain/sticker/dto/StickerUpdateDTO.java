@@ -5,11 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateStickerDTO {
+public class StickerUpdateDTO {
+    private Long id;
     private String title;
     private String content;
+    private String impression;
 }

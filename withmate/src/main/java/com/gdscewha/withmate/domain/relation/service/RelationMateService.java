@@ -22,13 +22,6 @@ public class RelationMateService {
     private final MemberService memberService;
     private final MemberRelationService mRService;
 
-//    // Relation 생성
-//    public void newMateMatched() {
-//        Relation relation = createRelation();
-//        mRService.createMemberRelationPair(relation);
-//        // TODO: Matching 관련 로직 필요함
-//    }
-
     // Relation 생성
     public Relation createRelation() {
         LocalDate today = LocalDate.now();
@@ -55,6 +48,7 @@ public class RelationMateService {
             return null;
         relation.setEndDate(LocalDate.now());
         relation.setIsProceed(false);
+        relationRepository.save(relation);
         return relation;
     }
 

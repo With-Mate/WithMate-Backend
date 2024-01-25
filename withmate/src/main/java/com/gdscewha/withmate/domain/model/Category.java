@@ -1,5 +1,9 @@
 package com.gdscewha.withmate.domain.model;
 
 public enum Category {
-    IT, ART,
+    HEALTH,
+    STUDY,
+    ART,
+    ADVENTURE,
+    HOBBY
 }

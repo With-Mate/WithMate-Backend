@@ -12,6 +12,8 @@ Google SolutionChallenge 위드메이트 팀의 백엔드 공간입니다.
 - refactor: 코드 리펙토링
 - test: 테스트 코드, 리펙토링 테스트 코드 추가
 - chore : 빌드 업무 수정, 패키지 매니저 수정
+- rename : 파일 혹은 폴더명을 수정
+- remove : 파일을 삭제
 
 ### Enginnering Stack
 - JDK : 17

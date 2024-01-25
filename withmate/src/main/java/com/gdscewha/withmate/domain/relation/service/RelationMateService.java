@@ -49,7 +49,7 @@ public class RelationMateService {
     }
 
     // 현재 Relation 끝내기
-    public Relation getEndCurrentRelation(){
+    public Relation endCurrentRelation(){
         Relation relation = getCurrentRelation();
         if (relation == null)
             return null;

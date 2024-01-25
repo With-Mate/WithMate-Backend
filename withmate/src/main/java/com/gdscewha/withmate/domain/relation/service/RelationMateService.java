@@ -1,5 +1,6 @@
 package com.gdscewha.withmate.domain.relation.service;
 
+import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
@@ -16,17 +17,17 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Service
 public class RelationMateService {
-
+    private final ValidationService validationService;
     private final RelationRepository relationRepository;
     private final MemberService memberService;
     private final MemberRelationService mRService;
 
-    // Relation 생성
-    public void newMateMatched() {
-        Relation relation = createRelation();
-        mRService.createMemberRelationPair(relation);
-        // cMRP에 Matching 관련 로직 필요함
-    }
+//    // Relation 생성
+//    public void newMateMatched() {
+//        Relation relation = createRelation();
+//        mRService.createMemberRelationPair(relation);
+//        // TODO: Matching 관련 로직 필요함
+//    }
 
     // Relation 생성
     public Relation createRelation() {
@@ -37,6 +38,23 @@ public class RelationMateService {
                 .isProceed(true)
                 .build();
         relationRepository.save(relation);
+        return relation;
+    }
+
+    // 현재 Relation 조회
+    public Relation getCurrentRelation(){
+        Member member = memberService.getCurrentMember();
+        MemberRelation memberRelation = mRService.findLastMROfMember(member);
+        return memberRelation.getRelation();
+    }
+
+    // 현재 Relation 끝내기
+    public Relation getEndCurrentRelation(){
+        Relation relation = getCurrentRelation();
+        if (relation == null)
+            return null;
+        relation.setEndDate(LocalDate.now());
+        relation.setIsProceed(false);
         return relation;
     }
 

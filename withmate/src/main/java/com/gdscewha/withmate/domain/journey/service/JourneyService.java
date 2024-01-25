@@ -5,8 +5,7 @@ import com.gdscewha.withmate.common.response.exception.JourneyException;
 import com.gdscewha.withmate.domain.journey.entity.Journey;
 import com.gdscewha.withmate.domain.journey.repository.JourneyRepository;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
-import com.gdscewha.withmate.domain.week.entity.Week;
-import com.gdscewha.withmate.domain.week.service.WeekService;
+import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +16,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JourneyService {
     private final JourneyRepository journeyRepository;
-    private final WeekService weekService;
+    private final RelationMateService relationMateService;
 
-    // 새로운 Journey 생성 및 저장: Relation을 받아서
-    public Journey createJourney(Relation relation) {
+    // 새로운 Journey 생성 및 저장
+    public Journey createJourney() {
+        Relation relation = relationMateService.getCurrentRelation();
+        if (relation == null)
+            return null;
         List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
         Integer journeyNum = existingJourneyList.size();
         Journey journey = Journey.builder()
@@ -31,10 +33,8 @@ public class JourneyService {
         return journeyRepository.save(journey);
     }
 
-    // 현재 Journey의 Week 신규 생성
-    public Journey createNewWeekOfCurrentJourney(Relation relation){
-        Journey journey = getCurrentJourney(relation);
-        Week week = weekService.createWeek(journey);
+    // 해당 Journey의 WeekCount 업데이트
+    public Journey updateWeekCountOfJourney(Journey journey){
         Long newWeekCount = journey.getWeekCount() + 1;
         journey.setWeekCount(newWeekCount);
         return journeyRepository.save(journey);
@@ -48,14 +48,15 @@ public class JourneyService {
         throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND);
     }
 
-    // 현재 Journey를 조회 -> DTO로 변경 필요
-    public Journey getCurrentJourney(Relation relation) {
+    // 현재 Journey 조회
+    public Journey getCurrentJourney() {
+        Relation relation = relationMateService.getCurrentRelation();
+        if (relation == null)
+            return null;
         List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
         if (existingJourneyList == null || existingJourneyList.isEmpty())
             return null;
         Integer index = existingJourneyList.size() - 1;
         return existingJourneyList.get(index);
     }
-    
-    // TODO: Relation에서 Journey 호출
 }

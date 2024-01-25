@@ -4,7 +4,6 @@ import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
-import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,26 +51,25 @@ public class MemberRelationService {
     }
 
     // MR 두 개 만들고 저장
-    public void createMemberRelationPair(Relation relation){
-        // 나랑 메이트의 Matching 정보를 불러오는 로직이 필요함
-        /*Matching myMatching = new Matching();
-        Matching mateMatching = new Matching();
+    public void createMemberRelationPair(List<Matching> matchingList, Relation relation){
+        Matching matching1 = matchingList.get(0);
+        Matching matching2 = matchingList.get(1);
 
         MemberRelation myMR = MemberRelation.builder()
-                .goal("")
-                .category(Category.ART) //임시 ENUM
+                .goal(matching1.getGoal())
+                .category(matching1.getCategory())
                 // message is nullable
-                .member(myMatching.getMember())
+                .member(matching1.getMember())
                 .relation(relation)
                 .build();
         mRRepository.save(myMR);
         MemberRelation mateMR = MemberRelation.builder()
-                .goal("")
-                .category(Category.ART) //임시 ENUM
+                .goal(matching2.getGoal())
+                .category(matching2.getCategory())
                 // message is nullable
-                .member(mateMatching.getMember())
+                .member(matching2.getMember())
                 .relation(relation)
                 .build();
-        mRRepository.save(mateMR);*/
+        mRRepository.save(mateMR);
     }
 }

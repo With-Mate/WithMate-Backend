@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatchingDTO {
-    private Long id;
     private String goal;
     private Category category;
 }

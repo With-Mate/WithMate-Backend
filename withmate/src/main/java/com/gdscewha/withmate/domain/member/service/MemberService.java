@@ -1,6 +1,7 @@
 package com.gdscewha.withmate.domain.member.service;
 
 import com.gdscewha.withmate.common.validation.ValidationService;
+import com.gdscewha.withmate.domain.member.dto.MemberCreateDto;
 import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
@@ -15,6 +16,24 @@ import java.time.LocalDate;
 public class MemberService {
     private final ValidationService validationService;
     private final MemberRepository memberRepository;
+
+
+    // 회원정보 생성하기
+    public Member createMember(MemberCreateDto memberCreateDto){
+        Member member = new Member();
+        member.setUserName(memberCreateDto.getUserName());
+        member.setNickname(memberCreateDto.getNickname());
+        member.setPasswd(memberCreateDto.getPasswd());
+        member.setEmail(memberCreateDto.getEmail());
+        member.setBirth(memberCreateDto.getBirth());
+        member.setCountry(memberCreateDto.getCountry());
+        member.setRegDate(LocalDate.now());
+        member.setLoginDate(LocalDate.now());
+        member.setIsRelationed(false);
+
+        return member;
+    }
+
 
     // 내 프로필 정보 조회 - getCurrentMember()에서 id를 받아서
     public MemberProfileDto getMyProfile() {

@@ -130,7 +130,6 @@ Google SolutionChallenge 위드메이트 팀의 백엔드 공간입니다.
         │   │                       └── service
         │   │                           └── WeekService.java
         │   └── resources
-        │       ├── application-local.yml
         │       └── application.yml
         └── test
             └── java

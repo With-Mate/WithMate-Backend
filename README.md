@@ -18,3 +18,127 @@ Google SolutionChallenge 위드메이트 팀의 백엔드 공간입니다.
 ### Enginnering Stack
 - JDK : 17
 - Spring : 3.1.8
+
+
+## File Structure
+
+
+```markdown
+.
+├── README.md
+└── withmate
+    ├── build.gradle
+    ├── gradle
+    │   └── wrapper
+    │       ├── gradle-wrapper.jar
+    │       └── gradle-wrapper.properties
+    ├── gradlew
+    ├── gradlew.bat
+    ├── settings.gradle
+    └── src
+        ├── main
+        │   ├── java
+        │   │   └── com
+        │   │       └── gdscewha
+        │   │           └── withmate
+        │   │               ├── WithMateApplication.java
+        │   │               ├── common
+        │   │               │   ├── response
+        │   │               │   │   └── exception
+        │   │               │   │       ├── DefaultException.java
+        │   │               │   │       ├── ErrorCode.java
+        │   │               │   │       ├── JourneyException.java
+        │   │               │   │       ├── MatchingException.java
+        │   │               │   │       ├── MateRelationException.java
+        │   │               │   │       ├── MemberException.java
+        │   │               │   │       ├── MemberRelationException.java
+        │   │               │   │       ├── StickerException.java
+        │   │               │   │       └── WeekException.java
+        │   │               │   └── validation
+        │   │               │       └── ValidationService.java
+        │   │               └── domain
+        │   │                   ├── journey
+        │   │                   │   ├── controller
+        │   │                   │   │   └── JourneyController.java
+        │   │                   │   ├── entity
+        │   │                   │   │   └── Journey.java
+        │   │                   │   ├── repository
+        │   │                   │   │   └── JourneyRepository.java
+        │   │                   │   └── service
+        │   │                   │       └── JourneyService.java
+        │   │                   ├── matching
+        │   │                   │   ├── dto
+        │   │                   │   │   └── MatchingDTO.java
+        │   │                   │   ├── entity
+        │   │                   │   │   └── Matching.java
+        │   │                   │   ├── repository
+        │   │                   │   │   └── MatchingRepository.java
+        │   │                   │   └── service
+        │   │                   │       └── MatchingService.java
+        │   │                   ├── member
+        │   │                   │   ├── controller
+        │   │                   │   │   └── MemberController.java
+        │   │                   │   ├── dto
+        │   │                   │   │   ├── MemberProfileDto.java
+        │   │                   │   │   └── MemberSettingsDto.java
+        │   │                   │   ├── entity
+        │   │                   │   │   └── Member.java
+        │   │                   │   ├── repository
+        │   │                   │   │   └── MemberRepository.java
+        │   │                   │   └── service
+        │   │                   │       └── MemberService.java
+        │   │                   ├── memberrelation
+        │   │                   │   ├── entity
+        │   │                   │   │   └── MemberRelation.java
+        │   │                   │   ├── repository
+        │   │                   │   │   └── MemberRelationRepository.java
+        │   │                   │   └── service
+        │   │                   │       └── MemberRelationService.java
+        │   │                   ├── model
+        │   │                   │   ├── Category.java
+        │   │                   │   └── Messages.java
+        │   │                   ├── relation
+        │   │                   │   ├── controller
+        │   │                   │   │   └── RelationController.java
+        │   │                   │   ├── dto
+        │   │                   │   │   ├── RelationHomeDto.java
+        │   │                   │   │   ├── RelationManageDto.java
+        │   │                   │   │   └── RelationReportDto.java
+        │   │                   │   ├── entity
+        │   │                   │   │   └── Relation.java
+        │   │                   │   ├── repository
+        │   │                   │   │   └── RelationRepository.java
+        │   │                   │   └── service
+        │   │                   │       └── RelationMateService.java
+        │   │                   ├── sticker
+        │   │                   │   ├── dto
+        │   │                   │   │   ├── StickerCreateDTO.java
+        │   │                   │   │   └── StickerUpdateDTO.java
+        │   │                   │   ├── entity
+        │   │                   │   │   └── Sticker.java
+        │   │                   │   ├── repository
+        │   │                   │   │   └── StickerRepository.java
+        │   │                   │   └── service
+        │   │                   │       └── StickerService.java
+        │   │                   └── week
+        │   │                       ├── controller
+        │   │                       │   └── WeekController.java
+        │   │                       ├── entity
+        │   │                       │   └── Week.java
+        │   │                       ├── repository
+        │   │                       │   └── WeekRepository.java
+        │   │                       └── service
+        │   │                           └── WeekService.java
+        │   └── resources
+        │       ├── application-local.yml
+        │       └── application.yml
+        └── test
+            └── java
+                └── com
+                    └── gdscewha
+                        └── withmate
+                            ├── WithMateApplicationTests.java
+                            └── domain
+                                └── MemberServiceTest.java
+```
+

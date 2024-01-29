@@ -17,14 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 //@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class MemberController {
     private final MemberService memberService;
-
-    @Autowired
-    public MemberController(MemberService memberService){
-        this.memberService = memberService;
-    }
 
     @GetMapping("/self/profile") // 내 정보 조회
     public ResponseEntity<?> getMyProfile() {

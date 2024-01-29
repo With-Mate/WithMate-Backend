@@ -1,3 +1,4 @@
+<meta charset="UTF-8">
 <html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="">
 <div layout:fragment="content" class="container my-3">
     <div class="my-3 border-bottom">
@@ -5,7 +6,7 @@
             <h4>회원가입</h4>
         </div>
     </div>
-    <form th:action="@{/api/signup}" th:object="${MemberCreateForm}" method="post">
+    <form th:action="@{/signup}" th:object="${MemberCreateForm}" method="post">
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
 
         <div class="mb-3">

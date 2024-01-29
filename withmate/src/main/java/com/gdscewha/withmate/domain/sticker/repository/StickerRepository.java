@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface StickerRepository extends JpaRepository<Sticker, Long> {
     Optional<Sticker> findById(Long id);
     List<Sticker> findAllByWeek(Week week);
+    List<Sticker> findAllByMember(Member member);
 }

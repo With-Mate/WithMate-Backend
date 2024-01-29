@@ -109,4 +109,5 @@ public class StickerService {
         return stickerPreviewDtos;
     }
 
+    // TODO: 컨트롤러 작성하며 프로필에서 여정, 주, 스티커 조회 방식 고민 필요
 }

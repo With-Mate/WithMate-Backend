@@ -5,16 +5,23 @@ import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
+import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
+import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
+import com.gdscewha.withmate.domain.sticker.entity.Sticker;
+import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final ValidationService validationService;
     private final MemberRepository memberRepository;
+    private final MemberRelationRepository mRRepository;
+    private final StickerRepository stickerRepository;
 
     // 내 프로필 정보 조회 - getCurrentMember()에서 id를 받아서
     public MemberProfileDto getMyProfile() {
@@ -65,6 +72,15 @@ public class MemberService {
     // 멤버 저장 - 테스트용
     public Member saveMember(Member member) {
         return memberRepository.save(member);
+    }
+    
+    // 멤버 삭제
+    public void deleteMember(Member member){
+        List<Sticker> stickerList = stickerRepository.findAllByMember(member);
+        stickerRepository.deleteAll(stickerList);
+        List<MemberRelation> memberRelationList = mRRepository.findAllByMember(member);
+        mRRepository.deleteAll(memberRelationList);
+        memberRepository.delete(member);
     }
 
     // TODO: (후순위) 회원가입, 로그인, 로그아웃

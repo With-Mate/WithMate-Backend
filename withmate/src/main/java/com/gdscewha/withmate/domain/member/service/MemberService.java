@@ -7,6 +7,7 @@ import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,21 +19,25 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
 
-    // 회원정보 생성하기
+    // 회원 생성
+    // TODO: 아이디, 닉네임 비번 중복 확인 필요 (아마 validation..?)
     public Member createMember(MemberCreateDto memberCreateDto){
-        Member member = new Member();
-        member.setUserName(memberCreateDto.getUserName());
-        member.setNickname(memberCreateDto.getNickname());
-        member.setPasswd(memberCreateDto.getPasswd());
-        member.setEmail(memberCreateDto.getEmail());
-        member.setBirth(memberCreateDto.getBirth());
-        member.setCountry(memberCreateDto.getCountry());
-        member.setRegDate(LocalDate.now());
-        member.setLoginDate(LocalDate.now());
-        member.setIsRelationed(false);
-
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        Member member = Member.builder()
+                .userName(memberCreateDto.getUserName())
+                .nickname(memberCreateDto.getNickname())
+                .passwd(bCryptPasswordEncoder.encode(memberCreateDto.getPasswd()))
+                .birth(memberCreateDto.getBirth())
+                .email(memberCreateDto.getEmail())
+                .country(memberCreateDto.getCountry())
+                .regDate(LocalDate.now())
+                .loginDate(LocalDate.now())
+                .isRelationed(false)
+                .build()
+                ;
         return member;
     }
+
 
 
     // 내 프로필 정보 조회 - getCurrentMember()에서 id를 받아서

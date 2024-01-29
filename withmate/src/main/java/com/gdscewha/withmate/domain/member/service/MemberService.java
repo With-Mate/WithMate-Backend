@@ -8,6 +8,7 @@ import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,16 +18,16 @@ import java.time.LocalDate;
 public class MemberService {
     private final ValidationService validationService;
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     // 회원 생성
     // TODO: 아이디, 닉네임 비번 중복 확인 필요 (아마 validation..?)
     public Member createMember(MemberCreateDto memberCreateDto){
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Member member = Member.builder()
                 .userName(memberCreateDto.getUserName())
                 .nickname(memberCreateDto.getNickname())
-                .passwd(bCryptPasswordEncoder.encode(memberCreateDto.getPasswd()))
+                .passwd(passwordEncoder.encode(memberCreateDto.getPasswd()))
                 .birth(memberCreateDto.getBirth())
                 .email(memberCreateDto.getEmail())
                 .country(memberCreateDto.getCountry())
@@ -35,7 +36,7 @@ public class MemberService {
                 .isRelationed(false)
                 .build()
                 ;
-        return member;
+        return memberRepository.save(member);
     }
 
 

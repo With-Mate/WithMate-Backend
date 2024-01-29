@@ -1,19 +1,30 @@
 package com.gdscewha.withmate.domain.member.controller;
 
+import com.gdscewha.withmate.domain.member.MemberCreateForm;
+import com.gdscewha.withmate.domain.member.dto.MemberCreateDto;
 import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class MemberController {
-
     private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService){
+        this.memberService = memberService;
+    }
 
     @GetMapping("/self/profile") // 내 정보 조회
     public ResponseEntity<?> getMyProfile() {

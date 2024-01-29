@@ -96,7 +96,7 @@ public class StickerService {
     // 이번 주 스티커 미리보기로 조회 메소드
     public List<StickerPreviewDto> getStickersForThisWeek() {
         Week week = weekService.getCurrentWeek();
-        List<Sticker> stickerList = stickerRepository.findByWeek(week);
+        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
         List<StickerPreviewDto> stickerPreviewDtos = null;
         for(Sticker sticker : stickerList) {
             String impression = sticker.getImpression();

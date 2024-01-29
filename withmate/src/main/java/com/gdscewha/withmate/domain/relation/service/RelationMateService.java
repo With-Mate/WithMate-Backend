@@ -1,6 +1,5 @@
 package com.gdscewha.withmate.domain.relation.service;
 
-import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;

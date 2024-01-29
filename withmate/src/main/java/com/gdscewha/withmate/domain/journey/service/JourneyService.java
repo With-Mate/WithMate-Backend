@@ -22,7 +22,7 @@ public class JourneyService {
     public Journey createJourney() {
         Relation relation = relationMateService.getCurrentRelation();
         if (relation == null)
-            return null;
+            throw new JourneyException(ErrorCode.RELATION_NOT_FOUND);
         List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
         Integer journeyNum = existingJourneyList.size();
         Journey journey = Journey.builder()
@@ -34,7 +34,10 @@ public class JourneyService {
     }
 
     // 해당 Journey의 WeekCount 업데이트
-    public Journey updateWeekCountOfJourney(Journey journey){
+    public Journey updateWeekCountOfCurrentJourney(){
+        Journey journey = getCurrentJourney();
+        if (journey == null)
+            throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND);
         Long newWeekCount = journey.getWeekCount() + 1;
         journey.setWeekCount(newWeekCount);
         return journeyRepository.save(journey);
@@ -52,7 +55,7 @@ public class JourneyService {
     public Journey getCurrentJourney() {
         Relation relation = relationMateService.getCurrentRelation();
         if (relation == null)
-            return null;
+            throw new JourneyException(ErrorCode.RELATION_NOT_FOUND);
         List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
         if (existingJourneyList == null || existingJourneyList.isEmpty())
             return null;

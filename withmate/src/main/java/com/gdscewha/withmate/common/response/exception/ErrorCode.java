@@ -33,6 +33,7 @@ public enum ErrorCode {
 
     // Sticker
     STICKER_NOT_FOUND(404, "스티커가 존재하지 않습니다."),
+    UNAUTHORIZED_TO_UPDATE_OR_DELETE_STICKER(401, "스티커를 수정/삭제할 권한이 없습니다."),
 
     // Week
     WEEK_NOT_FOUND(404, "Week가 존재하지 않습니다.");

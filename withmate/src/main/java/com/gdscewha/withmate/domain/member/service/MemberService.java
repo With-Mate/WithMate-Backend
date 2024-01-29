@@ -54,9 +54,6 @@ public class MemberService {
                 .email("testuser@example.com")
                 .birth("2000-01-01")
                 .country("Korea")
-                .regDate(LocalDate.now())
-                .loginDate(LocalDate.now())
-                .isRelationed(false)
                 .build()
                 ;
         return member;
@@ -66,10 +63,5 @@ public class MemberService {
     public Member saveMember(Member member) {
         return memberRepository.save(member);
     }
-
-    // TODO: (후순위) 회원가입, 로그인, 로그아웃
-    public void signUp () { }
-    public void logIn () { }
-    public void logOut() { }
 
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
 public class MemberController {
 
     private final MemberService memberService;

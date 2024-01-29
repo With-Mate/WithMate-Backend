@@ -17,10 +17,10 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memberId")
+    @Column(name = "memberId", updatable = false)
     private Long id;
 
-    @Column(nullable = false, name = "userName")
+    @Column(nullable = false, name = "userName", unique = true)
     private String userName;
 
     @Column(nullable = false, name = "nickname")
@@ -29,7 +29,7 @@ public class Member {
     @Column(nullable = false, name = "passwd")
     private String passwd;
 
-    @Column(nullable = false, name = "email")
+    @Column(nullable = false, name = "email", unique = true)
     private String email;
 
     @Column(nullable = false, name = "birth")
@@ -38,15 +38,26 @@ public class Member {
     @Column(nullable = false, name = "country")
     private String country;
 
+    @Builder.Default
     @Column(nullable = false, name = "regDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
-    private LocalDate regDate;
+    private LocalDate regDate = LocalDate.now();
 
+    @Builder.Default
     @Column(nullable = false, name = "loginDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
-    private LocalDate loginDate;
+    private LocalDate loginDate = LocalDate.now();
 
+    @Builder.Default
     @Column(nullable = false, name = "isRelationed")
-    private Boolean isRelationed;
+    private Boolean isRelationed = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public Member updateLoginDate() {
+        this.loginDate = LocalDate.now();
+        return this;
+    }
 }

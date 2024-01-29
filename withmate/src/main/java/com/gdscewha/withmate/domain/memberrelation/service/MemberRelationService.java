@@ -2,6 +2,7 @@ package com.gdscewha.withmate.domain.memberrelation.service;
 
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
@@ -15,6 +16,7 @@ import java.util.List;
 public class MemberRelationService {
 
     private final MemberRelationRepository mRRepository;
+    private final MemberService memberService;
 
     // Current Member의 모든 MR을 반환한다
     public List<MemberRelation> findAllMROfMember(Member member) {
@@ -73,16 +75,19 @@ public class MemberRelationService {
         mRRepository.save(mateMR);
     }
 
-    //카테고리 선택 시 memberrelation의 category에 저장하기
-    //목표와 카테고리를 DTO로 받을까?
+    // 내 Goal 업데이트
+    public MemberRelation updateMRGoal(String newGoal) {
+        Member member = memberService.getCurrentMember();
+        MemberRelation memberRelation = findLastMROfMember(member);
+        memberRelation.setGoal(newGoal);
+        return mRRepository.save(memberRelation);
+    }
 
-    // 목표 입력 시 저장하기
-
-    /*public MemberRelation updateMemberGoal(Long memberId, String newGoal) {
-        MemberRelation member = ValidationService valMemberRelation;
-
-        member.setGoal(newGoal);
-
-        return memberRepository.save(member);
-    }*/
+    // 내 Message 업데이트
+    public MemberRelation updateMRMessage(String newMessage) {
+        Member member = memberService.getCurrentMember();
+        MemberRelation memberRelation = findLastMROfMember(member);
+        memberRelation.setMessage(newMessage);
+        return mRRepository.save(memberRelation);
+    }
 }

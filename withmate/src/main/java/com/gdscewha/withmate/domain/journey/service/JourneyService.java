@@ -4,6 +4,8 @@ import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.JourneyException;
 import com.gdscewha.withmate.domain.journey.entity.Journey;
 import com.gdscewha.withmate.domain.journey.repository.JourneyRepository;
+import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +19,15 @@ import java.util.Optional;
 public class JourneyService {
     private final JourneyRepository journeyRepository;
     private final RelationMateService relationMateService;
+    private final MemberService memberService;
 
     // 새로운 Journey 생성 및 저장
-    public Journey createJourney() {
-        Relation relation = relationMateService.getCurrentRelation();
+    public Journey createJourney(Relation relation) {
         if (relation == null)
-            return null;
+            throw new JourneyException(ErrorCode.RELATION_NOT_FOUND);
         List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
-        Integer journeyNum = existingJourneyList.size();
         Journey journey = Journey.builder()
-                .journeyNum(journeyNum.longValue()) // 처음에 1L
+                .journeyNum(Long.valueOf(existingJourneyList.size())) // 처음에 1L
                 .weekCount(0L) // 처음에 0L
                 .relation(relation)
                 .build();
@@ -34,7 +35,11 @@ public class JourneyService {
     }
 
     // 해당 Journey의 WeekCount 업데이트
-    public Journey updateWeekCountOfJourney(Journey journey){
+    public Journey updateWeekCountOfCurrentJourney(){
+        Member member = memberService.getCurrentMember();
+        Journey journey = getCurrentJourney(member);
+        if (journey == null)
+            throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND);
         Long newWeekCount = journey.getWeekCount() + 1;
         journey.setWeekCount(newWeekCount);
         return journeyRepository.save(journey);
@@ -49,10 +54,10 @@ public class JourneyService {
     }
 
     // 현재 Journey 조회
-    public Journey getCurrentJourney() {
-        Relation relation = relationMateService.getCurrentRelation();
+    public Journey getCurrentJourney(Member member) {
+        Relation relation = relationMateService.getCurrentRelation(member);
         if (relation == null)
-            return null;
+            throw new JourneyException(ErrorCode.RELATION_NOT_FOUND);
         List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
         if (existingJourneyList == null || existingJourneyList.isEmpty())
             return null;

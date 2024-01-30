@@ -24,7 +24,7 @@ public class Journey {
     @Column(nullable = false, name = "weekCount")
     private Long weekCount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "relationId")
     private Relation relation;
 }

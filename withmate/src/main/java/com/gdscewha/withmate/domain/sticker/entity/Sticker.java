@@ -28,12 +28,13 @@ public class Sticker {
     @Column(nullable = false, name = "title")
     private String title;
 
-    @Column(nullable = false, name = "content")
-    private String content;
+    @Column(name = "content")
+    private String content; // 처음에 비어있음
 
+    @Builder.Default
     @Column(nullable = false, name = "creationTime")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
-    private LocalDate creationTime;
+    private LocalDate creationTime = LocalDate.now();
 
     @Column(name = "impression")
     private String impression;
@@ -42,11 +43,11 @@ public class Sticker {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
     private LocalDate impressionTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "weekId")
     private Week week;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "memberId")
     private Member member;
 }

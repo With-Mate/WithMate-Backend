@@ -31,11 +31,11 @@ public class MemberRelation {
     private String message;
 
     // Member와 Relation 다대다를 위한 매핑
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "relation_id")
     private Relation relation;
 }

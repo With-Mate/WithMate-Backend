@@ -7,6 +7,7 @@ import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
+import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,22 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberRelationRepository mRRepository;
     private final StickerRepository stickerRepository;
+    private final MemberRelationService mRService;
 
     // 내 프로필 정보 조회 - getCurrentMember()에서 id를 받아서
     public MemberProfileDto getMyProfile() {
         Member member = getCurrentMember();
         return getMemberProfile(member.getId());
+    }
+    // 메이트의 프로필 정보 조회
+    public MemberProfileDto getMateProfile() {
+        MemberRelation myMR = mRService.findLastMROfMember(getCurrentMember());
+        if (myMR == null)
+            return null; // 반환
+        MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, myMR.getRelation());
+        if (mateMR == null)
+            return null; // 반환
+        return getMemberProfile(mateMR.getMember().getId());
     }
     // 단일 유저 프로필 정보 조회 - TODO: 현재는 멤버 아이디를 LONG으로 받고 있음.
     public MemberProfileDto getMemberProfile(Long memberId) {
@@ -40,7 +52,7 @@ public class MemberService {
     }
 
     // 설정에서 내 정보 조회
-    public MemberSettingsDto getMySettingsInfo() {
+    public MemberSettingsDto getSettingsInfo() {
         Member member = getCurrentMember();
         return MemberSettingsDto.builder()
                 .userName(member.getUserName())
@@ -49,6 +61,15 @@ public class MemberService {
                 .birth(member.getBirth())
                 .country(member.getCountry())
                 .build();
+    }
+    // 설정에서 내 별명 업데이트
+    public MemberSettingsDto updateMemberNickname(String nickname) {
+        if (nickname == null) // nickname 변경이 불가능한 경우
+            return null;
+        Member member = getCurrentMember();
+        member.setNickname(nickname);
+        memberRepository.save(member);
+        return getSettingsInfo();
     }
 
     // 현재 사용자 로그인 정보로 Member 반환
@@ -66,10 +87,11 @@ public class MemberService {
                 .isRelationed(false)
                 .build()
                 ;
+        memberRepository.save(member);
         return member;
     }
     
-    // 멤버 저장 - 테스트용
+    // 멤버 저장(임시) - 테스트용
     public Member saveMember(Member member) {
         return memberRepository.save(member);
     }

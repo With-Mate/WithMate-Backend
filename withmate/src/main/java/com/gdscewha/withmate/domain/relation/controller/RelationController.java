@@ -1,6 +1,7 @@
 package com.gdscewha.withmate.domain.relation.controller;
 
 import com.gdscewha.withmate.domain.relation.dto.RelationHomeDto;
+import com.gdscewha.withmate.domain.relation.dto.RelationManageDto;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,17 @@ public class RelationController {
     @GetMapping("/home")
     public ResponseEntity<?> getHomeInfo() {
         RelationHomeDto relationHomeDto = relationMateService.getHomeInfo();
+        if (relationHomeDto == null)
+            return ResponseEntity.ok().header("Location", "/api/match").build();
         return ResponseEntity.ok().body(relationHomeDto);
     }
 
+    // 메이트 관리 화면
+    @GetMapping("/mate/manage")
+    public ResponseEntity<?> getMateManageInfo() {
+        RelationManageDto relationManageDto = relationMateService.getRelationManageInfo();
+        if (relationManageDto == null)
+            return ResponseEntity.ok().header("Location", "/api/match").build();
+        return ResponseEntity.ok().body(relationManageDto);
+    }
 }

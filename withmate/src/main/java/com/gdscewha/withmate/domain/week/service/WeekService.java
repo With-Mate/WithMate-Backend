@@ -4,6 +4,8 @@ import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.WeekException;
 import com.gdscewha.withmate.domain.journey.entity.Journey;
 import com.gdscewha.withmate.domain.journey.service.JourneyService;
+import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.week.entity.Week;
 import com.gdscewha.withmate.domain.week.repository.WeekRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 public class WeekService {
     private final WeekRepository weekRepository;
     private final JourneyService journeyService;
+    private final MemberService memberService;
 
     // 새로운 Week 생성 및 저장: Journey를 받아서
     public Week createWeek() {
@@ -34,7 +37,8 @@ public class WeekService {
 
     // 해당 Week의 StickerCount 업데이트
     public Week updateStickerCountOfCurrentWeek(Long diff){
-        Week week = getCurrentWeek();
+        Member member = memberService.getCurrentMember();
+        Week week = getCurrentWeek(member);
         if(week == null)
             throw new WeekException(ErrorCode.WEEK_NOT_FOUND);
         Long newStickerCount = week.getStickerCount() + diff;
@@ -59,8 +63,8 @@ public class WeekService {
     }
 
     // 현재 Week 조회
-    public Week getCurrentWeek() {
-        Journey journey = journeyService.getCurrentJourney();
+    public Week getCurrentWeek(Member member) {
+        Journey journey = journeyService.getCurrentJourney(member);
         if (journey == null)
             throw new WeekException(ErrorCode.JOURNEY_NOT_FOUND);
         Long weekNum = journey.getWeekCount();

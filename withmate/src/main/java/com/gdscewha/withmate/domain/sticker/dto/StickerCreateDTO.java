@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StickerCreateDTO {
     private String title;
-    private String content;
 }

@@ -35,7 +35,6 @@ public class StickerService {
         Sticker sticker = Sticker.builder()
                 .stickerNum(currentWeek.getStickerCount() + 1)
                 .title(stickerCreateDTO.getTitle())
-                .content(stickerCreateDTO.getContent())
                 .creationTime(LocalDate.now())
                 .week(currentWeek)
                 .member(member)

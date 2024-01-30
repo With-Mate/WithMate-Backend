@@ -1,8 +1,9 @@
 package com.gdscewha.withmate.domain.memberrelation.service;
 
+import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
-import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
@@ -16,7 +17,6 @@ import java.util.List;
 public class MemberRelationService {
 
     private final MemberRelationRepository mRRepository;
-    private final MemberService memberService;
 
     // Current Member의 모든 MR을 반환한다
     public List<MemberRelation> findAllMROfMember(Member member) {
@@ -38,18 +38,6 @@ public class MemberRelationService {
             return lastMR;
         }
         return null; // 찾지 못했음
-    }
-
-    // Relation으로 두 MR 쌍을 찾고 그중 메이트의 MR을 반환
-    public MemberRelation findMROfMateByRelation(MemberRelation myMR, Relation relation) {
-        List<MemberRelation> mRPair = mRRepository.findAllByRelation(relation);
-        if (mRPair.size() == 2) {
-            if (mRPair.get(0) != myMR)
-                return mRPair.get(0);
-            else
-                return mRPair.get(1);
-        }
-        return null; // MR 쌍을 찾지 못했음
     }
 
     // MR 두 개 만들고 저장
@@ -75,17 +63,29 @@ public class MemberRelationService {
         mRRepository.save(mateMR);
     }
 
-    // 내 Goal 업데이트
-    public MemberRelation updateMRGoal(String newGoal) {
-        Member member = memberService.getCurrentMember();
+    // Relation이 형성된 이후
+
+    // Relation으로 두 MR 쌍을 찾고 그중 메이트의 MR을 반환
+    public MemberRelation findMROfMateByRelation(MemberRelation myMR, Relation relation) {
+        List<MemberRelation> mRPair = mRRepository.findAllByRelation(relation);
+        if (mRPair.size() == 2) {
+            if (mRPair.get(0) != myMR)
+                return mRPair.get(0);
+            else
+                return mRPair.get(1);
+        }
+        throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND); // MR 쌍을 찾지 못했음
+    }
+
+    // Member의 Goal 업데이트
+    public MemberRelation updateMRGoal(Member member, String newGoal) {
         MemberRelation memberRelation = findLastMROfMember(member);
         memberRelation.setGoal(newGoal);
         return mRRepository.save(memberRelation);
     }
 
-    // 내 Message 업데이트
-    public MemberRelation updateMRMessage(String newMessage) {
-        Member member = memberService.getCurrentMember();
+    // Member의 Message 업데이트
+    public MemberRelation updateMRMessage(Member member, String newMessage) {
         MemberRelation memberRelation = findLastMROfMember(member);
         memberRelation.setMessage(newMessage);
         return mRRepository.save(memberRelation);

@@ -5,12 +5,12 @@ import com.gdscewha.withmate.domain.matching.dto.MatchingReqDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.matching.service.MatchingService;
-import com.gdscewha.withmate.domain.member.entity.Member;
-import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.model.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -62,10 +62,11 @@ public class MatchingController {
         return ResponseEntity.ok().body("기존 matching을 취소했습니다.");
     }
 
-    // 매핑 가능한 메이트 보기
+    // 매핑 가능한 사람들 보기 (카테고리 순서대로 반환됨)
     @GetMapping("/match/people")
     public ResponseEntity<?> getPeopleMatching() {
-        Matching matching =
+        List<Matching> matchingList = matchingService.getPeopleMatching();
+        return ResponseEntity.ok().body(matchingList);
     }
 
     // 매칭하기
@@ -74,6 +75,6 @@ public class MatchingController {
         MatchedResultDto resultDto = matchingService.getMatchedResult(category);
         if (resultDto == null)
             return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다");
-        return ResponseEntity.ok("매칭 성공").body(resultDto);
+        return ResponseEntity.ok().body("매칭 성공\n" + resultDto);
     }
 }

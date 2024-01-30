@@ -67,7 +67,7 @@ public class RelationMateService {
             return null; // 반환
         Relation relation = myMR.getRelation();
         if (relation == null)
-            return null; // 반환
+            throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
         MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, relation);
         if (mateMR == null)
             return null; // 반환
@@ -81,7 +81,7 @@ public class RelationMateService {
                 .build();
     }
 
-    // 메이트 관리 화면에 정보 매핑
+    // 메이트 관리 화면에 정보 매핑-> 나중에 예외처리 고민 필요
     public RelationManageDto getRelationManageInfo() {
         Member member = memberService.getCurrentMember();
         MemberRelation myMR = mRService.findLastMROfMember(member);

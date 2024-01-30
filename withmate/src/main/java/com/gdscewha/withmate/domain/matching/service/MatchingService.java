@@ -32,13 +32,11 @@ public class MatchingService {
     private final MatchingRepository matchingRepository;
     private final MemberRepository memberRepository;
 
-    // 내 매칭 받아오기 (존재하지 않으면 null 반환)
+    // 내 매칭 받아오기 (MatchingResDto 반환, 존재하지 않으면 null 반환)
     public MatchingResDto getMyMatching() {
         Member member = memberService.getCurrentMember();
-        Matching matching = matchingRepository.findByMember(member).get();
-        if (matching == null)
-            return null;
-        return new MatchingResDto(matching);
+        Optional<Matching> matchingOptional = matchingRepository.findByMember(member);
+        return matchingOptional.map(MatchingResDto::new).orElse(null);
     }
 
     // 내 매칭을 생성 혹은 기존 매칭 업데이트
@@ -84,7 +82,12 @@ public class MatchingService {
 
     // 모든 카테고리의 매칭중인 사람들을 조회
     public List<Matching> getPeopleMatching() {
-
+        Category[] categories = Category.values();
+        List<Matching> matchingList = new ArrayList<>();
+        for(Category c : categories) {
+            matchingList.addAll(matchingRepository.findAllByCategory(c));
+        }
+        return matchingList;
     }
 
     // tryMatching로부터 생성되는 매칭 결과를 컨트롤러에 반환
@@ -104,7 +107,7 @@ public class MatchingService {
         // 같은 카테고리의 Matching 리스트
         List<Matching> matchingList = matchingRepository.findAllByCategory(category);
         
-        // 혼자면 (matchings에 1개) 기다려야 함
+        // 혼자면 (matchingList에 1개) 기다려야 함
         if (matchingList.size() == 1){
             return null;
         }

@@ -16,18 +16,18 @@ public class MemberRelationController {
     private final MemberRelationService mRService;
     private final MemberService memberService;
 
-    // 내 목표 업데이트 - 비워둘 수 없음
+    // 내 목표 업데이트
     @PatchMapping("/self/goal/update")
-    public ResponseEntity<?> updateGoal(@RequestParam(required = true) String goal) {
+    public ResponseEntity<?> updateGoal(@RequestParam String goal) {
         Member member = memberService.getCurrentMember(); // 나중에 다르게 변경 예정임
         if (!member.getIsRelationed())
             return ResponseEntity.badRequest().build(); // 메이트가 없어서 바꿀 수 없음
         MemberRelation memberRelation = mRService.updateMRGoal(member, goal);
         return ResponseEntity.ok().body(memberRelation);
     }
-    // 내 응원 메시지 업데이트 - 비워둘 수 없음
+    // 내 응원 메시지 업데이트
     @PatchMapping("/self/message/update")
-    public ResponseEntity<?> updateMessage(@RequestParam(required = true) String message) {
+    public ResponseEntity<?> updateMessage(@RequestParam String message) {
         Member member = memberService.getCurrentMember(); // 나중에 다르게 변경 예정임
         if (!member.getIsRelationed())
             return ResponseEntity.badRequest().build(); // 메이트가 없어서 바꿀 수 없음

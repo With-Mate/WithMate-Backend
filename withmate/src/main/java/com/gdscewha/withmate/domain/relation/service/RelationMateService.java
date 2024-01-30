@@ -1,5 +1,7 @@
 package com.gdscewha.withmate.domain.relation.service;
 
+import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
@@ -11,6 +13,7 @@ import com.gdscewha.withmate.domain.relation.repository.RelationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RelationException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -34,25 +37,27 @@ public class RelationMateService {
         return relation;
     }
 
-    // 현재 Relation 조회
-    public Relation getCurrentRelation(){
-        Member member = memberService.getCurrentMember();
+    // 단일 Member의 현재 Relation 조회
+    public Relation getCurrentRelation(Member member){
         MemberRelation memberRelation = mRService.findLastMROfMember(member);
+        if (memberRelation == null)
+            return null;
         return memberRelation.getRelation();
     }
 
     // 메이트 신고하기
     // 추후 구글 소셜 로그인 구현 후 GMAIL API 사용해 추가
 
-    // 현재 Relation 끝내기
+    // 현재 Relation 끝내기: 두 멤버의 isRelationed도 false로 설정
     public Relation endCurrentRelation(){
-        Relation relation = getCurrentRelation();
+        Member member = memberService.getCurrentMember();
+        Relation relation = getCurrentRelation(member);
         if (relation == null)
-            return null;
+            throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
+        mRService.changeIsRelationedOfMembers(relation);
         relation.setEndDate(LocalDate.now());
         relation.setIsProceed(false);
-        relationRepository.save(relation);
-        return relation;
+        return relationRepository.save(relation);
     }
 
     // 홈 화면에 정보 매핑

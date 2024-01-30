@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -85,20 +86,16 @@ public class StickerService {
                 .impressionTime(sticker.getImpressionTime().toString())
                 .isMine(null)
                 .build();
-        if (sticker.getMember() == currentMember){
-            stickerMyResDto.setIsMine(true);
-        } else {
-            stickerMyResDto.setIsMine(false);
-        }
+        stickerMyResDto.setIsMine(sticker.getMember() == currentMember);
         return stickerMyResDto;
     }
 
     // 이번 주 스티커 미리보기로 조회 메소드
-    public List<StickerPreviewDto> getStickersForThisWeek() {
-        Week week = weekService.getCurrentWeek();
+    public List<StickerPreviewDto> getStickersForAWeek(Member member) {
+        Week week = weekService.getCurrentWeek(member);
         List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
-        List<StickerPreviewDto> stickerPreviewDtos = null;
-        for(Sticker sticker : stickerList) {
+        List<StickerPreviewDto> stickerPreviewDtos = new ArrayList<>();
+        for (Sticker sticker : stickerList) {
             String impression = sticker.getImpression();
             if (impression == null || impression.equals("")) {
                 stickerPreviewDtos.add(new StickerPreviewDto(sticker.getId(), sticker.getTitle(), false));

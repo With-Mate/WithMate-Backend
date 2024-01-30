@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+
     // 내 프로필 조회
     @GetMapping("/self/profile")
     public ResponseEntity<?> getMyProfile() {

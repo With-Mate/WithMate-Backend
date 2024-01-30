@@ -91,14 +91,6 @@ public class MemberRelationService {
         memberRepository.save(member2);
     }
 
-    // Member의 Goal 업데이트
-    public MemberRelation updateMRGoal(Member member, String newGoal) {
-        MemberRelation memberRelation = findLastMROfMember(member);
-        if (memberRelation == null)
-            throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
-        memberRelation.setGoal(newGoal);
-        return mRRepository.save(memberRelation);
-    }
     // Member의 Message 업데이트
     public MemberRelation updateMRMessage(Member member, String newMessage) {
         MemberRelation memberRelation = findLastMROfMember(member);
@@ -107,4 +99,13 @@ public class MemberRelationService {
         memberRelation.setMessage(newMessage);
         return mRRepository.save(memberRelation);
     }
+    
+    // Member의 Goal 업데이트: 폐기
+    /*public MemberRelation updateMRGoal(Member member, String newGoal) {
+        MemberRelation memberRelation = findLastMROfMember(member);
+        if (memberRelation == null)
+            throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
+        memberRelation.setGoal(newGoal);
+        return mRRepository.save(memberRelation);
+    }*/
 }

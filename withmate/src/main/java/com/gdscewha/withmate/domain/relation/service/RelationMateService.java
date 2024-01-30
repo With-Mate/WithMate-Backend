@@ -11,10 +11,8 @@ import com.gdscewha.withmate.domain.relation.dto.RelationManageDto;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.repository.RelationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.RelationException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -55,7 +53,7 @@ public class RelationMateService {
         Relation relation = getCurrentRelation(member);
         if (relation == null)
             throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
-        mRService.changeIsRelationedOfMembers(relation);
+        mRService.endIsRelationedOfMembers(relation);
         relation.setEndDate(LocalDate.now());
         relation.setIsProceed(false);
         return relationRepository.save(relation);

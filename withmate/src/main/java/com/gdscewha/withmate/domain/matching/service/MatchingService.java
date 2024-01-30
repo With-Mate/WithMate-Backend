@@ -1,9 +1,11 @@
 package com.gdscewha.withmate.domain.matching.service;
 
+import com.gdscewha.withmate.common.response.exception.CategoryException;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MatchingException;
-import com.gdscewha.withmate.common.validation.ValidationService;
-import com.gdscewha.withmate.domain.matching.dto.MatchingDTO;
+import com.gdscewha.withmate.domain.matching.dto.MatchedResultDto;
+import com.gdscewha.withmate.domain.matching.dto.MatchingReqDto;
+import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.matching.repository.MatchingRepository;
 import com.gdscewha.withmate.domain.member.entity.Member;
@@ -23,58 +25,87 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MatchingService {
+
     private final MemberService memberService;
     private final MemberRelationService memberRelationService;
     private final RelationMateService relationMateService;
     private final MatchingRepository matchingRepository;
     private final MemberRepository memberRepository;
-    private final ValidationService validationService;
 
-    // 매칭한 적 있는지 확인(Matching이 존재하는지)
-    public Matching hasMatched(MatchingDTO matchingDTO) {
+    // 내 매칭 받아오기 (존재하지 않으면 null 반환)
+    public MatchingResDto getMyMatching() {
         Member member = memberService.getCurrentMember();
-        Optional<Matching> existingMatching = matchingRepository.findByMember(member);
-        if (existingMatching.isPresent()) {
+        Matching matching = matchingRepository.findByMember(member).get();
+        if (matching == null)
+            return null;
+        return new MatchingResDto(matching);
+    }
+
+    // 내 매칭을 생성 혹은 기존 매칭 업데이트
+    public MatchingResDto createOrUpdateMatching(MatchingReqDto reqDto) {
+        Member member = memberService.getCurrentMember();
+        Optional<Matching> matchingOptional = matchingRepository.findByMember(member);
+        if (matchingOptional.isPresent()) {
             // 매칭한 적 있을 때 업데이트
-            return updateMatching(existingMatching.get(), matchingDTO); //existingMatching.get()-> get이 optional에서 matching 객체 꺼내오는 함수
+            return new MatchingResDto(updateMatching(matchingOptional.get(), reqDto)); //existingMatching.get() -> get이 optional에서 matching 객체 꺼내오는 함수
         } else {
             // 매칭한 적 없을 때 생성
-            return createMatching(member, matchingDTO);
+            return new MatchingResDto(createMatching(member, reqDto));
         }
     }
 
-    // 매칭 객체 새로 만들기 (매칭 전에 안했던 사람만)
-    public Matching createMatching(Member member, MatchingDTO matchingDTO) {
-            Matching matching = Matching.builder()
-                    .member(member)
-                    .goal(matchingDTO.getGoal())
-                    .category(Category.ART)
-                    .build();
-
-            return matchingRepository.save(matching);
-    }
-
-    // 매칭 객체 업데이트하기 (저번에 매칭 했던 사람) - 목표와 카테고리 업데이트
-    public Matching updateMatching(Matching matching, MatchingDTO matchingDTO){
-        // 목표가 기존과 다른 경우 업데이트
-        if (!matching.getGoal().equals(matchingDTO.getGoal())) {
-            matching.setGoal(matchingDTO.getGoal());
-        }
-        // 카테고리가 기존과 다른 경우 업데이트
-        if (!matching.getCategory().equals(matchingDTO.getCategory())) {
-            matching.setCategory(matchingDTO.getCategory());
-        }
+    // 새 매칭 생성 (매칭을 하지 않았던 사람)
+    public Matching createMatching(Member member, MatchingReqDto reqDto) {
+        Matching matching = Matching.builder()
+                .goal(reqDto.getGoal())
+                .category(reqDto.getCategory())
+                .member(member)
+                .build();
         return matchingRepository.save(matching);
     }
 
+    // 매칭 객체 업데이트하기 (전에 매칭을 했던 사람) - 목표, 카테고리 업데이트
+    public Matching updateMatching(Matching matching, MatchingReqDto reqDto){
+        matching.setGoal(reqDto.getGoal());
+        matching.setCategory(reqDto.getCategory());
+        return matchingRepository.save(matching);
+    }
 
-    // category에 대해 다른 matching 사람이 존재하는지 (Find by category) - 일단 나부터 1개
+    // 내 매칭 삭제 (매칭 취소)
+    public Matching deleteMatching() {
+        Member member = memberService.getCurrentMember();
+        Optional<Matching> existingMatching = matchingRepository.findByMember(member);
+        if (existingMatching.isPresent()) {
+            matchingRepository.delete(existingMatching.get());
+            return existingMatching.get();
+        }
+        return null;
+    }
+
+    // 모든 카테고리의 매칭중인 사람들을 조회
+    public List<Matching> getPeopleMatching() {
+
+    }
+
+    // tryMatching로부터 생성되는 매칭 결과를 컨트롤러에 반환
+    public MatchedResultDto getMatchedResult(Category category) {
+        if (category == null)
+            throw new CategoryException(ErrorCode.CATEGORY_NOT_FOUND);
+        List<Matching> matchingList = tryMatching(category);
+        // 매칭 실패 (해당 카테고리에 1명)
+        if (matchingList == null)
+            return null;
+        // 매칭 성공
+        return new MatchedResultDto(matchingList);
+    }
+
+    // category에 대해 다른 matching 사람이 존재하는지 확인 후 매칭 (Find by category) - 일단 나부터 1개
     public List<Matching> tryMatching(Category category) {
         // 같은 카테고리의 Matching 리스트
         List<Matching> matchingList = matchingRepository.findAllByCategory(category);
         
-        // 혼자면 (matchings에 1개) 기다려야 한다고 응답 (service에서는 null을 리턴)
-        if(matchingList.size() == 1){
+        // 혼자면 (matchings에 1개) 기다려야 함
+        if (matchingList.size() == 1){
             return null;
         }
         // Matching 상태가 2명이면 매칭 시작
@@ -93,18 +124,17 @@ public class MatchingService {
             // Matching 삭제
             matchingRepository.deleteAll(matchingList);
 
-            // isRelationed를 true로 업데이트
+            // Member들의 isRelationed를 true로 업데이트 후 저장
             mate1.getMember().setIsRelationed(true);
             mate2.getMember().setIsRelationed(true);
-
-            // Member 저장
             memberRepository.save(mate1.getMember());
             memberRepository.save(mate2.getMember());
 
             // 수정된 Matching 리스트 반환
             return mateList;
-        }else {
+        } else {
             throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
         }
     }
+
 }

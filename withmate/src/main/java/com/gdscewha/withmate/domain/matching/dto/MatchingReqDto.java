@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchingDTO {
+public class MatchingReqDto {
     private String goal;
     private Category category;
 }

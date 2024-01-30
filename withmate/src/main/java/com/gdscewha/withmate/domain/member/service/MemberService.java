@@ -1,5 +1,7 @@
 package com.gdscewha.withmate.domain.member.service;
 
+import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberException;
 import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
@@ -88,6 +90,8 @@ public class MemberService {
                 .build()
                 ;
         memberRepository.save(member);
+        if (member == null) // 고민 필요
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
         return member;
     }
     

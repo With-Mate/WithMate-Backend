@@ -29,7 +29,7 @@ public class Matching {
 //    @Column(name = "ageGroup") // 추후 나잇대
 //    private Enum ageGroup;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "memberId")
     private Member member;
 }

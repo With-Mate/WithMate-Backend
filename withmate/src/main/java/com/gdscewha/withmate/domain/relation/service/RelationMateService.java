@@ -11,6 +11,7 @@ import com.gdscewha.withmate.domain.relation.dto.RelationManageDto;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.repository.RelationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.management.relation.RelationException;

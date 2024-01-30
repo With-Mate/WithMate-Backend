@@ -87,6 +87,7 @@ public class MemberService {
                 .isRelationed(false)
                 .build()
                 ;
+        memberRepository.save(member);
         return member;
     }
     

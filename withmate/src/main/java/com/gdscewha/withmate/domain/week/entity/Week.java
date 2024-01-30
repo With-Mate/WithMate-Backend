@@ -32,7 +32,7 @@ public class Week {
     @Column(nullable = false, name = "stickerCount")
     private Long stickerCount = 0L; // 처음에 0개라서 근데 나중에 필요없을수도...
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "journeyId")
     private Journey journey;
 }

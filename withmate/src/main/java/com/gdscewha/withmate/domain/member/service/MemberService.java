@@ -80,7 +80,7 @@ public class MemberService {
         Member member = Member.builder()
                 .userName("TestUserName")
                 .nickname("TestNickname")
-                .passwd("Test-CurrentMember-Passwd")
+                .passwd("TestPasswd")
                 .email("testuser@example.com")
                 .birth("2000-01-01")
                 .country("Korea")

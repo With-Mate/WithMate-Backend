@@ -22,6 +22,7 @@ public class MatchingController {
     // 내 매칭 여부 확인, 매칭 대기 중인 경우 매칭 중인 정보 반환
     @GetMapping("/match")
     public ResponseEntity<?> getMatchingInfo() {
+        // TODO: 코드 변경 필요
         // Member member = memberService.getCurrentMember(); // 로그인 따로 확인해야
         // 멤버가 로그인 x
         // if (member == null)
@@ -33,7 +34,7 @@ public class MatchingController {
         // match 가능
         MatchingResDto resDto = matchingService.getMyMatching();
         if (resDto == null)
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build(); // 리다이렉트 해야 함
         return ResponseEntity.ok().body(resDto); //필요한 정보들 전송
     }
 

@@ -1,5 +1,6 @@
 package com.gdscewha.withmate.domain.member.service;
 
+import com.gdscewha.withmate.auth.login.DefaultLoginService;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MemberException;
 import com.gdscewha.withmate.common.validation.ValidationService;
@@ -15,8 +16,8 @@ import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,8 @@ public class MemberService {
     private final MemberRelationRepository mRRepository;
     private final StickerRepository stickerRepository;
     private final MemberRelationService mRService;
+    // 임시 코드
+    private final DefaultLoginService defaultLoginService;
 
     // 내 프로필 정보 조회 - getCurrentMember()에서 id를 받아서
     public MemberProfileDto getMyProfile() {
@@ -76,23 +79,25 @@ public class MemberService {
 
     // 현재 사용자 로그인 정보로 Member 반환
     public Member getCurrentMember() {
+        // 나중에 수정해야 하는 부분...
+        Long memberId = defaultLoginService.getCurrentMemberId();
+        Optional<Member> member = memberRepository.findById(memberId);
+        if (member.isPresent())
+            return member.get();
+        else
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
+
         // TODO: 임시 코드. 추후 시큐리티 코드 추가해 받아올 것임.
-        Member member = Member.builder()
+        /*Member member = Member.builder()
                 .userName("TestUserName")
                 .nickname("TestNickname")
                 .passwd("TestPasswd")
                 .email("testuser@example.com")
                 .birth("2000-01-01")
                 .country("Korea")
-                .regDate(LocalDate.now())
-                .loginDate(LocalDate.now())
-                .isRelationed(false)
                 .build()
-                ;
-        memberRepository.save(member);
-        if (member == null) // 고민 필요
-            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
-        return member;
+                ;*/
+        //memberRepository.save(member);
     }
     
     // 멤버 저장(임시) - 테스트용
@@ -108,10 +113,5 @@ public class MemberService {
         mRRepository.deleteAll(memberRelationList);
         memberRepository.delete(member);
     }
-
-    // TODO: (후순위) 회원가입, 로그인, 로그아웃
-    public void signUp () { }
-    public void logIn () { }
-    public void logOut() { }
 
 }

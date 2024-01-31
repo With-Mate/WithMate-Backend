@@ -1,11 +1,11 @@
-package com.gdscewha.withmate.auth.config;
+package com.gdscewha.withmate.auth.login;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class UserSignUpReqDto {
+public class SignUpReqDto {
     private String userName;
     private String nickname;
     private String email;

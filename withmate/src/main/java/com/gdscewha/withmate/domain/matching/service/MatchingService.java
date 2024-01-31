@@ -26,11 +26,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MatchingService {
 
+    private final MatchingRepository matchingRepository;
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final MemberRelationService memberRelationService;
     private final RelationMateService relationMateService;
-    private final MatchingRepository matchingRepository;
-    private final MemberRepository memberRepository;
 
     // 내 매칭 받아오기 (MatchingResDto 반환, 존재하지 않으면 null 반환)
     public MatchingResDto getMyMatching() {

@@ -15,7 +15,6 @@ import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service

@@ -1,4 +1,4 @@
-package com.gdscewha.withmate.auth.googlelogin;
+package com.gdscewha.withmate.auth.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

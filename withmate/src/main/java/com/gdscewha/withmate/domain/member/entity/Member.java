@@ -60,4 +60,12 @@ public class Member {
         this.loginDate = LocalDate.now();
         return this;
     }
+
+    public Member updateWhenLogin(String name, String birthday, String locale, LocalDate date){
+        this.nickname = name;
+        this.birth = birthday;
+        this.country = locale;
+        this.loginDate = date;
+        return this;
+    }
 }

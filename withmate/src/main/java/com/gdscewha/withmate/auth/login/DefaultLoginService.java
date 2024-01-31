@@ -4,13 +4,21 @@ import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.entity.Role;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 public class DefaultLoginService {
 
     private final MemberRepository memberRepository;
+    // 임시 코드
+    private Long currentMemberId;
+    public Long getCurrentMemberId() { // 임시 코드
+        return currentMemberId;
+    }
 
     // 기본 로그인
     public Member defaultLogin(LoginRequestDto loginRequestDto) {
@@ -21,6 +29,7 @@ public class DefaultLoginService {
         if (!Objects.equals(member.getPasswd(), loginRequestDto.getPasswd()))
             return null;
         // LoginDate를 업데이트해 반환
+        currentMemberId = member.getId();
         return member.updateLoginDate();
     }
 
@@ -39,6 +48,7 @@ public class DefaultLoginService {
                 .role(Role.USER)
                 .build();
         // 회원 저장
+        currentMemberId = newMember.getId();
         return memberRepository.save(newMember);
     }
 }

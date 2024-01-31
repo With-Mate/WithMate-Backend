@@ -47,8 +47,8 @@ public class MatchingController {
 
     // 매칭 가능한 사람이 있음 -> 매칭하기
     @PostMapping("/match/relate")
-    public ResponseEntity<?> postNewMatchingRelation(@RequestBody Category category) { // 나중에 바꿔야 할수도
-        MatchedResultDto resultDto = matchingService.getMatchedResult(category);
+    public ResponseEntity<?> postNewMatchingRelation(@RequestBody MatchingReqDto reqDto) { // 나중에 바꿔야 할수도
+        MatchedResultDto resultDto = matchingService.getMatchedResult(reqDto.getCategory());
         if (resultDto == null)
             return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다");
         return ResponseEntity.ok().body("매칭 성공\n" + resultDto);

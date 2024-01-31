@@ -96,6 +96,7 @@ public class MatchingService {
             throw new CategoryException(ErrorCode.CATEGORY_NOT_FOUND);
         List<Matching> matchingList = tryMatching(category);
         // 매칭 실패 (해당 카테고리에 1명)
+        // TODO: 로직 변경 필요함!!!!
         if (matchingList == null)
             return null;
         // 매칭 성공

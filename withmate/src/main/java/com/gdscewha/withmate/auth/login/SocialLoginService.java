@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,6 +40,7 @@ public class SocialLoginService {
         String accessToken = getAccessToken(code, registrationId);
         JsonNode userResourceNode = getUserResource(accessToken, registrationId);
 
+        log.info("소셜 로그인 중 - JsonNode로 Member 업데이트 혹은 신규 생성으로 진입");
         return saveOrUpdate(userResourceNode);
     }
     // JsonNode로 Member 업데이트 혹은 신규 생성
@@ -48,14 +50,33 @@ public class SocialLoginService {
         String birthday = userResourceNode.get("birthday").asText();
         String locale = userResourceNode.get("locale").asText();
 
-        Member member = memberRepository.findByEmail(email)
-                .map(entity -> entity.updateWhenLogin(name, birthday, locale, LocalDate.now())) // 이름, 생일, 지역, 날짜 업데이트
-                .orElse(generateMember(userResourceNode));
-        return memberRepository.save(member);
+        Optional<Member> memberOptional = memberRepository.findByEmail(email);
+        if (memberOptional.isPresent()){
+            log.info("Doing Social Login - MemberRepository에서 email로 member를 찾았고, 존재합니다.");
+            Member member = memberOptional.get().updateWhenLogin(name, birthday, locale, LocalDate.now());
+            log.info(member.getUserName()); //  Member의 이메일 확인
+            log.info(member.getNickname()); //  Member의 닉네임 확인
+            log.info(member.getEmail()); //  Member의 이메일 확인
+            log.info(member.getBirth()); // Member의 생일 확인
+            log.info(member.getCountry()); // Member의 국가 확인
+            log.info(member.getRole().toString()); // Member의 역할 확인
+            return memberRepository.save(member);
+        } else {
+            log.info("Doing Social Login - MemberRepository에서 email로 member를 찾았고, 존재하지 않으므로 생성합니다.");
+            Member member = generateMember(userResourceNode);
+            log.info(member.getUserName()); //  Member의 이메일 확인
+            log.info(member.getNickname()); //  Member의 닉네임 확인
+            log.info(member.getEmail()); //  Member의 이메일 확인
+            log.info(member.getBirth()); // Member의 생일 확인
+            log.info(member.getCountry()); // Member의 국가 확인
+            log.info(member.getRole().toString()); // Member의 역할 확인
+            return memberRepository.save(member);
+        }
     }
     // JsonNode로 새 계정 생성
     private Member generateMember(JsonNode userResourceNode) {
-        return Member.builder()
+        log.info("Doing Social Login - JsonNode로 새 계정 생성");
+       return Member.builder()
                 .userName(userResourceNode.get("email").asText()) // userName을 email로 설정
                 .nickname(userResourceNode.get("name").asText())
                 .passwd(generatePasswordById(userResourceNode.get("id").asText())) // 랜덤한 비밀번호 생성

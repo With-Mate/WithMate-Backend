@@ -52,9 +52,10 @@ public class Member {
     @Column(nullable = false, name = "isRelationed")
     private Boolean isRelationed = false;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(nullable = false, name = "role")
+    private Role role = Role.USER;
 
     public Member updateLoginDate() {
         this.loginDate = LocalDate.now();

@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StickerCreateDTO {
+public class StickerPreviewDto {
+    private Long id;
     private String title;
+    private Boolean isImpressed;
 }

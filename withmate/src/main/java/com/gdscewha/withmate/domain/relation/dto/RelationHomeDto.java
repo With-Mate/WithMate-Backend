@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 public class RelationHomeDto {
     // from MemberRelation Entity
     // 내 정보
-    private String MyName;
-    private String MyMessage;
-    private String MyGoal;
+    private String myName;
+    private String myMessage;
+    private String myGoal;
     // 상대방 정보
-    private String MateName;
-    private String MateMessage;
-    private String MateGoal;
+    private String mateName;
+    private String mateMessage;
+    private String mateGoal;
 }

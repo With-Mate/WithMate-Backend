@@ -1,50 +1,49 @@
 package com.gdscewha.withmate.domain.member.service;
 
+import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberException;
 import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.dto.MemberCreateDto;
 import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
+import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
+import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
+import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService;
+import com.gdscewha.withmate.domain.sticker.entity.Sticker;
+import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final ValidationService validationService;
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-
-
-    // 회원 생성
-    // TODO: 아이디, 닉네임 비번 중복 확인 필요 (아마 validation..?)
-    public Member createMember(MemberCreateDto memberCreateDto){
-        Member member = Member.builder()
-                .userName(memberCreateDto.getUserName())
-                .nickname(memberCreateDto.getNickname())
-                .passwd(passwordEncoder.encode(memberCreateDto.getPasswd()))
-                .birth(memberCreateDto.getBirth())
-                .email(memberCreateDto.getEmail())
-                .country(memberCreateDto.getCountry())
-                .regDate(LocalDate.now())
-                .loginDate(LocalDate.now())
-                .isRelationed(false)
-                .build()
-                ;
-        return memberRepository.save(member);
-    }
-
-
+    private final MemberRelationRepository mRRepository;
+    private final StickerRepository stickerRepository;
+    private final MemberRelationService mRService;
 
     // 내 프로필 정보 조회 - getCurrentMember()에서 id를 받아서
     public MemberProfileDto getMyProfile() {
         Member member = getCurrentMember();
         return getMemberProfile(member.getId());
+    }
+    // 메이트의 프로필 정보 조회
+    public MemberProfileDto getMateProfile() {
+        MemberRelation myMR = mRService.findLastMROfMember(getCurrentMember());
+        if (myMR == null)
+            return null; // 반환
+        MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, myMR.getRelation());
+        if (mateMR == null)
+            return null; // 반환
+        return getMemberProfile(mateMR.getMember().getId());
     }
     // 단일 유저 프로필 정보 조회 - TODO: 현재는 멤버 아이디를 LONG으로 받고 있음.
     public MemberProfileDto getMemberProfile(Long memberId) {
@@ -58,7 +57,7 @@ public class MemberService {
     }
 
     // 설정에서 내 정보 조회
-    public MemberSettingsDto getMySettingsInfo() {
+    public MemberSettingsDto getSettingsInfo() {
         Member member = getCurrentMember();
         return MemberSettingsDto.builder()
                 .userName(member.getUserName())
@@ -68,6 +67,15 @@ public class MemberService {
                 .country(member.getCountry())
                 .build();
     }
+    // 설정에서 내 별명 업데이트
+    public MemberSettingsDto updateMemberNickname(String nickname) {
+        if (nickname == null) // nickname 변경이 불가능한 경우
+            return null;
+        Member member = getCurrentMember();
+        member.setNickname(nickname);
+        memberRepository.save(member);
+        return getSettingsInfo();
+    }
 
     // 현재 사용자 로그인 정보로 Member 반환
     public Member getCurrentMember() {
@@ -75,7 +83,7 @@ public class MemberService {
         Member member = Member.builder()
                 .userName("TestUserName")
                 .nickname("TestNickname")
-                .passwd("Test-CurrentMember-Passwd")
+                .passwd("TestPasswd")
                 .email("testuser@example.com")
                 .birth("2000-01-01")
                 .country("Korea")
@@ -84,12 +92,24 @@ public class MemberService {
                 .isRelationed(false)
                 .build()
                 ;
+        memberRepository.save(member);
+        if (member == null) // 고민 필요
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND);
         return member;
     }
     
-    // 멤버 저장 - 테스트용
+    // 멤버 저장(임시) - 테스트용
     public Member saveMember(Member member) {
         return memberRepository.save(member);
+    }
+
+    // 멤버 삭제
+    public void deleteMember(Member member){
+        List<Sticker> stickerList = stickerRepository.findAllByMember(member);
+        stickerRepository.deleteAll(stickerList);
+        List<MemberRelation> memberRelationList = mRRepository.findAllByMember(member);
+        mRRepository.deleteAll(memberRelationList);
+        memberRepository.delete(member);
     }
 
     // TODO: (후순위) 회원가입, 로그인, 로그아웃

@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RelationManageDto {
     private String startDate; //언제부터
-    private String proceedingTime; // 며칠째 지속중인지
-    // 상대방 정보
-    private String MateName;
-    private String MateCategory;
-    private String MateMessage;
+    private Long proceedingTime; // 며칠째 지속중인지
     // 내 응원 수정
-    private String MyMessage;
+    private String myMessage;
+    // 상대방 정보
+    private String mateName;
+    private String mateCategory;
+    private String mateMessage;
 }

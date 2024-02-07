@@ -5,9 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9649bfa0-97b5-43eb-a56d-038274780d29" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/common/response/exception/CategoryException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/controller/MatchingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/dto/MatchedResultDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/dto/MatchingResDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/memberrelation/controller/MemberRelationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerPreviewDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerResDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/common/response/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/common/response/exception/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/journey/entity/Journey.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/journey/entity/Journey.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/journey/service/JourneyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/journey/service/JourneyService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/dto/MatchingDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/dto/MatchingReqDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/entity/Matching.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/entity/Matching.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/service/MatchingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/service/MatchingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/member/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/member/controller/MemberController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/member/service/MemberService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/member/service/MemberService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/memberrelation/entity/MemberRelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/memberrelation/entity/MemberRelation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/memberrelation/service/MemberRelationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/memberrelation/service/MemberRelationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/controller/RelationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/controller/RelationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/dto/RelationHomeDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/dto/RelationHomeDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/dto/RelationManageDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/dto/RelationManageDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/dto/RelationReportDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/dto/RelationReportDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/service/RelationMateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/relation/service/RelationMateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerCreateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerCreateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/entity/Sticker.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/entity/Sticker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/repository/StickerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/repository/StickerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/service/StickerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/service/StickerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/week/controller/WeekController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/week/controller/WeekController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/week/entity/Week.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/week/entity/Week.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/week/service/WeekService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/week/service/WeekService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +91,10 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "feat/signup/ds",
+    "git-widget-placeholder": "Merging feat/signup/ds",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
 }]]></component>

@@ -14,3 +14,4 @@ withmate/src/main/resources/application-local.yml
 .idea/misc.xml
 .idea/workspace.xml
 withmate/gradlew
+.idea/workspace.xml

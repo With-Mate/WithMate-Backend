@@ -1,28 +1,13 @@
-package com.gdscewha.withmate.auth.login;
+package com.gdscewha.withmate.auth.sociallogin;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.gdscewha.withmate.domain.member.entity.Member;
-import com.gdscewha.withmate.domain.member.entity.Role;
-import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
-import org.springframework.http.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Slf4j
 public class SocialLoginService {
-
+/*
     private final Environment env;
     private final RestTemplate restTemplate = new RestTemplate();
     private final MemberRepository memberRepository;
@@ -125,5 +110,5 @@ public class SocialLoginService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(rawId);
     }
-
+*/
 }

@@ -4,10 +4,12 @@ import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
     Optional<Matching> findById(Long id);
     Optional<Matching> findByMember(Member member); // 특정 Member가 Matching 중인지 확인 위해

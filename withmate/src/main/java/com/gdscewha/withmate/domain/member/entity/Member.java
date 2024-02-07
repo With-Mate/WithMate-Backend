@@ -1,6 +1,7 @@
 package com.gdscewha.withmate.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gdscewha.withmate.domain.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

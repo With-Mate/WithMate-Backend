@@ -1,4 +1,4 @@
-package com.gdscewha.withmate.domain.member.entity;
+package com.gdscewha.withmate.domain.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

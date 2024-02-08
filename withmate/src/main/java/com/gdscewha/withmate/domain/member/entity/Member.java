@@ -1,9 +1,13 @@
 package com.gdscewha.withmate.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import java.time.LocalDate;
 
@@ -58,12 +62,18 @@ public class Member {
     @Column(nullable = false, name = "role")
     private Role role = Role.USER;
 
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name="matchingId") //FK
+    @NotFound(action= NotFoundAction.IGNORE)
+    private Matching matching;
+
     public Member updateLoginDate() {
         this.loginDate = LocalDate.now();
         return this;
     }
 
-    public Member updateWhenLogin(String name, String birthday, String locale, LocalDate date){
+    public Member updateBySocialProfileWhenLogin(String name, String birthday, String locale, LocalDate date){
         this.nickname = name;
         this.birth = birthday;
         this.country = locale;

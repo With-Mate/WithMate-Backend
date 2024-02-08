@@ -1,5 +1,6 @@
 package com.gdscewha.withmate.domain.matching.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import jakarta.persistence.*;
@@ -29,7 +30,7 @@ public class Matching {
 //    @Column(name = "ageGroup") // 추후 나잇대
 //    private Enum ageGroup;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "memberId")
+    @OneToOne(mappedBy = "matching") //FK를 Member가 갖는 것으로 바꿈
+    @JsonBackReference
     private Member member;
 }

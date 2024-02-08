@@ -21,7 +21,8 @@ jobs:
     # Gradlew 실행 허용
     - name: Run chmod to make gradlew executable
       run: |
-        pwd
+        ls
+        cd withmate
         chmod +x ./gradlew
       
     # JDK 17 세팅

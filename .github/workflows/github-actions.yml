@@ -49,13 +49,19 @@ jobs:
         cd ./withmate
         ./gradlew build -x test
 
-
-    # Setup gcloud CLI
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+    # Setup 
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
       with:
-        version: '290.0.1'
-        service_account_key: ${{secrets.SSH_KEY}}
-        project_id: ${{secrets.PROJECT_ID}}
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        version: '>= 363.0.0'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
 
     # Configure Docker to use the gcloud command-line tool as a credential
     # helper for authentication

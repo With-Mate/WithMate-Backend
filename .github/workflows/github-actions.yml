@@ -21,8 +21,7 @@ jobs:
     # Gradlew 실행 허용
     - name: Run chmod to make gradlew executable
       run: |
-        cd withmate
-        chmod +x ./gradlew
+        chmod +x ./withmate/gradlew
       
     # JDK 17 세팅
     - name: Set up JDK 17
@@ -41,4 +40,4 @@ jobs:
 
     # gradle build
     - name: Build with Gradle
-      run: ./gradlew build -x test
+      run: ./withmate/gradlew build -x test

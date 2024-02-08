@@ -80,4 +80,8 @@ public class AuthController {
         return ResponseEntity.ok().body(signOutMessage);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<?> intro() {
+        return ResponseEntity.ok().body("시작 화면입니다.");
+    }
 }

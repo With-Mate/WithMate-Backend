@@ -10,8 +10,8 @@ on:
     
 env:
   PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
-  GCE_INSTANCE: ${{INSTANCE_NAME}}
-  GCE_INSTANCE_ZONE: ${{INSTANCE_ZONE}}
+  GCE_INSTANCE: ${{secrets.INSTANCE_NAME}}
+  GCE_INSTANCE_ZONE: ${{secrets.INSTANCE_ZONE}}
   
 jobs:
   build:

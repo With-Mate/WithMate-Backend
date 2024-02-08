@@ -1,4 +1,4 @@
-name: CI/CD using GitHub Actions
+name: Deploy using GitHub Actions
 
 # event trigger
 # develop/main 브랜치에 push 혹은 pull_request가 되었을 때 실행
@@ -10,11 +10,19 @@ on:
 
 jobs:
   build:
+  
     runs-on: ubuntu-latest
+    
     steps:
     # 기본 체크아웃
     - name: Checkout
       uses: actions/checkout@v4
+      
+    # Gradlew 실행 허용
+    - name: Run chmod to make gradlew executable
+      run: |
+        pwd
+        chmod +x ./gradlew
       
     # JDK 17 세팅
     - name: Set up JDK 17

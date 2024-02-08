@@ -6,7 +6,7 @@ COPY gradle /app/gradle
 RUN ./gradlew clean build -x test --no-daemon
 
 # 2: 빌드한 애플리케이션을 실행하기 위한 JRE 17을 포함한 새로운 image 생성
-FROM adoptopenjdk/openjdk17:jre-17.0.1_12-alpine
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080

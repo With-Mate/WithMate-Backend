@@ -21,7 +21,6 @@ jobs:
     # Gradlew 실행 허용
     - name: Run chmod to make gradlew executable
       run: |
-        ls
         cd withmate
         chmod +x ./gradlew
       
@@ -35,7 +34,7 @@ jobs:
     # prod 설정
     - name: make application-prod.yml
       run: |
-        cd ./src/main/resources
+        cd ./withmate/src/main/resources
         touch ./application-prod.yml
         echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
       shell: bash

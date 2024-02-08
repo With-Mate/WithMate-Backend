@@ -64,7 +64,7 @@ public class JwtTokenProvider {
         }
         /* email 값이 정상적으로 있고, JWT_EXPIRATION_TIME도 지나지 않았다면,
          * 해당 토큰의 userName 정보를 가진 멤버가 있는지 DB에서 확인 */
-        return memberRepository.findByUserName(userName).get();
+        return memberRepository.findMemberByUserName(userName);
     }
 
     private String getUserNameClaim(String jwtToken) {

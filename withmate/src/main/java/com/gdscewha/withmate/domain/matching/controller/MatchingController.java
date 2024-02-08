@@ -58,8 +58,8 @@ public class MatchingController {
         return ResponseEntity.ok().body(resultDto);
     }
 
-    // 매칭 대기 하기: 내 매칭 데이터 생성 혹은 업데이트
-    @PostMapping("/match/post")
+    // 매칭 대기 등록: 내 매칭 데이터 생성 혹은 업데이트
+    @PostMapping("/match/register")
     public ResponseEntity<?> updateMatchingInfo(@RequestBody MatchingReqDto reqDto) {
         // 입력이 잘못 들어옴
         if (!matchingService.checkMatchingAvailability(reqDto))

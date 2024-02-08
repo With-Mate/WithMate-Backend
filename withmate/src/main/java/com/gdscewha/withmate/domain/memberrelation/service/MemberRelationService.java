@@ -77,7 +77,7 @@ public class MemberRelationService {
             return mRPair.get(1);
     }
 
-    // Relation 삭제 시, Relation으로 두 MR을 찾고 둘의 isRelationed를 false로 변경
+    // Relation 삭제 시, Relation으로 두 MR을 찾고 isRelationed를 false로 변경, Matching을 null로 변경
     public void endIsRelationedOfMembers(Relation relation) {
         List<MemberRelation> mRPair = mRRepository.findAllByRelation(relation);
         if (mRPair.size() != 2) {
@@ -87,6 +87,8 @@ public class MemberRelationService {
         Member member2 = mRPair.get(1).getMember();
         member1.setIsRelationed(false);
         member2.setIsRelationed(false);
+        member1.setMatching(null);
+        member2.setMatching(null);
         memberRepository.save(member1);
         memberRepository.save(member2);
     }

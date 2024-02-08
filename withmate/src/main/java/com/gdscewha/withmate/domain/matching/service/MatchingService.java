@@ -17,6 +17,7 @@ import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +53,12 @@ public class MatchingService {
     // 내 매칭을 생성 혹은 기존 매칭 업데이트
     public Matching createOrUpdateMatching(MatchingReqDto reqDto) {
         Member member = memberService.getCurrentMember();
-        Optional<Matching> matchingOptional = matchingRepository.findByMember(member);
-        if (matchingOptional.isPresent()) {
-            // 매칭한 적 있을 때 업데이트
-            return updateMatching(matchingOptional.get(), reqDto); //existingMatching.get() -> get이 optional에서 matching 객체 꺼내오는 함수
-        } else {
+        if (member.getMatching() == null) {
             // 매칭한 적 없을 때 생성
             return createMatching(member, reqDto);
+        } else {
+            // 매칭한 적 있을 때 업데이트
+            return updateMatching(member.getMatching(), reqDto); //existingMatching.get() -> get이 optional에서 matching 객체 꺼내오는 함수
         }
     }
 
@@ -73,6 +73,7 @@ public class MatchingService {
     }
 
     // 매칭 객체 업데이트하기 (전에 매칭을 했던 사람) - 목표, 카테고리 업데이트
+
     public Matching updateMatching(Matching matching, MatchingReqDto reqDto){
         matching.setGoal(reqDto.getGoal());
         matching.setCategory(reqDto.getCategory());
@@ -82,10 +83,11 @@ public class MatchingService {
     // 내 매칭 삭제 (매칭 취소)
     public Matching deleteMatching() {
         Member member = memberService.getCurrentMember();
-        Optional<Matching> existingMatching = matchingRepository.findByMember(member);
-        if (existingMatching.isPresent()) {
-            matchingRepository.delete(existingMatching.get());
-            return existingMatching.get();
+        if (member.getMatching() != null) {
+            matchingRepository.delete(member.getMatching());
+            member.setMatching(null);
+            memberRepository.save(member);
+            return member.getMatching();
         }
         return null;
     }
@@ -116,6 +118,9 @@ public class MatchingService {
         // matchingList에 2개 이상이어야 매칭 가능
         if (matchingList.size() >= 2){
             Matching mateMatching = matchingList.get(0);
+            Member mate = mateMatching.getMember();
+            Member me = memberService.getCurrentMember();
+            // mate 탈퇴시 matching도 삭제되므로 유효한 멤버
 
             List<Matching> mateList = new ArrayList<>(); // 메이트 리스트
             mateList.add(mateMatching);
@@ -128,11 +133,13 @@ public class MatchingService {
             matchingRepository.deleteAll(matchingList);
 
             // Member들의 isRelationed를 true로 업데이트 후 저장
-            mateMatching.getMember().setIsRelationed(true);
-            myMatching.getMember().setIsRelationed(true);
-            memberRepository.save(mateMatching.getMember());
-            memberRepository.save(myMatching.getMember());
-
+            mate.setIsRelationed(true);
+            me.setIsRelationed(true);
+            // 각 멤버에 Matching set 하기
+            mate.setMatching(mateMatching);
+            me.setMatching(myMatching);
+            memberRepository.save(mate);
+            memberRepository.save(me);
             // 수정된 Matching 리스트 반환
             return mateList;
         } else {

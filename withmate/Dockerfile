@@ -1,4 +1,5 @@
 FROM openjdk:17-jdk-slim as build
-COPY build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
+WORKDIR /app
+COPY . /app
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]

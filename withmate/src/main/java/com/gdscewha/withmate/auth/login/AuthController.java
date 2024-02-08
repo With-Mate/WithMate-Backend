@@ -48,7 +48,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> userLogout() {
         String logoutMessage = authService.logoutMember();
-        return ResponseEntity.ok().body("로그아웃 성공\n" + logoutMessage);
+        return ResponseEntity.ok().body(logoutMessage);
     }
 
     /*@GetMapping("/login/oauth2/code/{registrationId}")
@@ -60,7 +60,7 @@ public class AuthController {
     }*/
 
     // 임시
-    @GetMapping("/user/info")
+    @GetMapping("/test/user/info")
     @Operation(summary = "맴버 엔티티 반환 API", description = "JWT 토큰을 바탕으로 맴버 엔티티를 반환하는 테스트용 API 입니다.")
     public ResponseEntity<Member> getMemberData(Authentication authentication) {
         // 인증된 사용자의 정보를 인증 객체(authentication)를 통해 가져오기
@@ -72,4 +72,12 @@ public class AuthController {
 
         return new ResponseEntity<>(member, HttpStatusCode.valueOf(200));
     }
+
+    // 탈퇴
+    @DeleteMapping("/signout")
+    public ResponseEntity<?> userSignOut() {
+        String signOutMessage = authService.signOutMember();
+        return ResponseEntity.ok().body(signOutMessage);
+    }
+
 }

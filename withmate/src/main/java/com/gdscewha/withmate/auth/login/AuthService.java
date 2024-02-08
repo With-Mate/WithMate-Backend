@@ -4,6 +4,7 @@ import com.gdscewha.withmate.auth.dto.LoginReqDto;
 import com.gdscewha.withmate.auth.dto.SignUpReqDto;
 import com.gdscewha.withmate.auth.jwt.JwtTokenProvider;
 import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.model.Role;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -25,6 +24,7 @@ import java.time.LocalDate;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -84,6 +84,15 @@ public class AuthService {
     public String logoutMember() {
         // 현재 사용자의 인증 정보를 제거하여 로그아웃 수행
         SecurityContextHolder.clearContext();
-        return "로그아웃";
+        return "로그아웃 되었습니다.";
     }
+
+    public String signOutMember() {
+        // 계정 삭제
+        memberService.deleteMember();
+        // 현재 사용자의 인증 정보를 제거하여 로그아웃 수행
+        SecurityContextHolder.clearContext();
+        return "계정 탈퇴가 완료되었습니다.";
+    }
+
 }

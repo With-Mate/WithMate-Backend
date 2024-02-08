@@ -9,9 +9,11 @@ on:
     branches: [ "develop/main" ]
     
 env:
+  GITHUB_SHA: ${{ github.sha }}
   PROJECT_ID: ${{secrets.PROJECT_ID}}
   GCE_INSTANCE: ${{secrets.GCE_INSTANCE}}
   GCE_INSTANCE_ZONE: ${{secrets.GCE_INSTANCE_ZONE}}
+  
   
 jobs:
   setup-build-publish-deploy:
@@ -23,6 +25,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       
+    # Gradlew 실행 허용
+    - name: Run chmod to make gradlew executable
+      run: |
+        chmod +x ./withmate/gradlew
+        
     # JDK 17 세팅
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -69,9 +76,3 @@ jobs:
         gcloud compute instances update-container "$GCE_INSTANCE" \
           --zone "$GCE_INSTANCE_ZONE" \
           --container-image "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
-          
-      env:
-        GITHUB_SHA: ${{ github.sha }}
-        PROJECT_ID: ${{ secrets.PROJECT_ID }}
-        GCE_INSTANCE: ${{ secrets.GCE_INSTANCE }}
-        GCE_INSTANCE_ZONE: ${{ secrets.GCE_INSTANCE_ZONE }}

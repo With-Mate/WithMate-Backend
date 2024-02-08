@@ -14,7 +14,7 @@ public class AuthDetailService implements UserDetailsService {
 
     @Override
     public AuthDetails loadUserByUsername(String userName) {
-        Member member = memberRepository.findByUserName(userName).get();
+        Member member = memberRepository.findMemberByUserName(userName);
         return new AuthDetails(member);
     }
 }

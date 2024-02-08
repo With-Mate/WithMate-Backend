@@ -31,15 +31,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper om = new ObjectMapper(); //JSON 데이터를 Java 객체로 매핑
             Member member = om.readValue(request.getInputStream(), Member.class); //클라이언트에서 전달된 JSON 데이터는 Member 클래스로 변환
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    member.getEmail(),
+                    member.getUserName(),
                     member.getPasswd()
             );
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
-            return  authentication;
+            return authentication;
 
         } catch (Exception e) {
+            // Member 매핑 불가: 로그인 불가
             e.printStackTrace();
         }
 

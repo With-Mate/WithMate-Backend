@@ -23,11 +23,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       
-    # Gradlew 실행 허용
-    - name: Run chmod to make gradlew executable
-      run: |
-        chmod +x ./withmate/gradlew
-      
     # JDK 17 세팅
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -43,13 +38,7 @@ jobs:
         echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
       shell: bash
 
-    # gradle build
-    - name: Build with Gradle
-      run: |
-        cd ./withmate
-        ./gradlew build -x test
-
-    # Setup 
+    # GCP Setup 
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
@@ -70,7 +59,7 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |-
-        docker build --tag "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA" .
+        docker build --tag "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA" -f ./withmate/Dockerfile ./withmate
     # Push the Docker image to Google Container Registry
     - name: Publish
       run: |-
@@ -80,3 +69,9 @@ jobs:
         gcloud compute instances update-container "$GCE_INSTANCE" \
           --zone "$GCE_INSTANCE_ZONE" \
           --container-image "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
+          
+      env:
+        GITHUB_SHA: ${{ github.sha }}
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        GCE_INSTANCE: ${{ secrets.GCE_INSTANCE }}
+        GCE_INSTANCE_ZONE: ${{ secrets.GCE_INSTANCE_ZONE }}

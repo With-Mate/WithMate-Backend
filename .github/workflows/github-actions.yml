@@ -7,7 +7,12 @@ on:
     branches: [ "develop/main" ]
   pull_request:
     branches: [ "develop/main" ]
-
+    
+env:
+  PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+  GCE_INSTANCE: ${{INSTANCE_NAME}}
+  GCE_INSTANCE_ZONE: ${{INSTANCE_ZONE}}
+  
 jobs:
   build:
   

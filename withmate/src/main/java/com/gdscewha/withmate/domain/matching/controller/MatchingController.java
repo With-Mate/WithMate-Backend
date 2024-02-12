@@ -5,7 +5,8 @@ import com.gdscewha.withmate.domain.matching.dto.MatchingReqDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.matching.service.MatchingService;
-import com.gdscewha.withmate.domain.model.Category;
+import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,56 +19,54 @@ import java.util.List;
 public class MatchingController {
 
     private final MatchingService matchingService;
+    private final MemberService memberService;
 
     // 내 매칭 여부 확인, 매칭 대기 중인 경우 매칭 중인 정보 반환
     @GetMapping("/match")
     public ResponseEntity<?> getMatchingInfo() {
-        // TODO: 코드 변경 필요
-        // Member member = memberService.getCurrentMember(); // 로그인 따로 확인해야
-        // 멤버가 로그인 x
-        // if (member == null)
-        //    return ResponseEntity.ok().header("Location", "/intro").build();
-        // 멤버가 relation이 있는 경우 /api/home으로 리다이렉트해야함
-        //if (member.getIsRelationed())
-        //    return ResponseEntity.ok().header("Location", "/api/home").build();
-
-        // match 가능
-        MatchingResDto resDto = matchingService.getMyMatching();
+        Member member = memberService.getCurrentMember();
+        // match 불가:
+        // 메이트 관계가 있는 경우 리다이렉트
+        if (member.getIsRelationed())
+            return ResponseEntity.ok().header("Location", "/api/home").build();
+        // match 가능:
+        MatchingResDto resDto = matchingService.getCurrentMatchingDto();
+        // 아직 매칭 X
         if (resDto == null)
-            return ResponseEntity.noContent().build(); // 리다이렉트 해야 함
-        return ResponseEntity.ok().body(resDto); //필요한 정보들 전송
+            return ResponseEntity.noContent().build();
+        // 매칭 중: 매칭 중인 상태에 대한 정보를 전송
+        return ResponseEntity.ok().body(resDto);
     }
 
     // 매핑 가능한 사람 보기 (카테고리 순서대로 반환됨)
     @GetMapping("/match/people")
     public ResponseEntity<?> getPeopleMatching() {
         List<Matching> matchingList = matchingService.getPeopleMatching();
+        if (matchingList.isEmpty())
+            return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다"); // 사람이 없음; 매칭 대기 띄워야 함
         return ResponseEntity.ok().body(matchingList);
     }
 
-    // 매칭 가능한 사람이 있음 -> 매칭하기
+    // 매칭하기
     @PostMapping("/match/relate")
-    public ResponseEntity<?> postNewMatchingRelation(@RequestBody MatchingReqDto reqDto) { // 나중에 바꿔야 할수도
-        MatchedResultDto resultDto = matchingService.getMatchedResult(reqDto.getCategory());
-        if (resultDto == null)
-            return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다");
-        return ResponseEntity.ok().body("매칭 성공\n" + resultDto);
+    public ResponseEntity<?> postNewMatchingRelation(@RequestBody MatchingReqDto reqDto) {
+        // 입력이 잘못 들어옴
+        if (!matchingService.checkMatchingAvailability(reqDto))
+            return ResponseEntity.badRequest().body("목표 혹은 카테고리가 비어있습니다.");
+        // 정상적으로 매칭 맺기 가능
+        MatchedResultDto resultDto = matchingService.getMatchedResult(reqDto);
+        return ResponseEntity.ok().body(resultDto);
     }
 
-    // 매칭 대기 하기: 내 매칭 데이터 생성 혹은 업데이트
-    @PostMapping("/match/post")
+    // 매칭 대기 등록: 내 매칭 데이터 생성 혹은 업데이트
+    @PostMapping("/match/register")
     public ResponseEntity<?> updateMatchingInfo(@RequestBody MatchingReqDto reqDto) {
-        // goal이 비어있음
-        if (reqDto.getGoal().isBlank() || reqDto.getGoal() == null)
-            return ResponseEntity.badRequest().build();
-        // category가 비어있음
-        if (reqDto.getCategory() == null)
-            return ResponseEntity.badRequest().build();
+        // 입력이 잘못 들어옴
+        if (!matchingService.checkMatchingAvailability(reqDto))
+            return ResponseEntity.badRequest().body("목표 혹은 카테고리가 비어있습니다.");
         // 정상적으로 매칭 생성/업데이트 가능
-        MatchingResDto resDto = matchingService.createOrUpdateMatching(reqDto);
-        if (resDto == null)
-            return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok().body(resDto);
+        Matching matching = matchingService.createOrUpdateMatching(reqDto);
+        return ResponseEntity.ok().body(matching);
     }
 
     // 매칭 대기 취소: 내 매칭 삭제

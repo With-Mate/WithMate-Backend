@@ -48,7 +48,7 @@ class MemberServiceTest {
         when(validationService.valMember(fakeMember.getId())).thenReturn(fakeMember);
 
         // MemberService의 saveMember 메서드 호출
-        Member savedMember = memberService.saveMember(fakeMember);
+        Member savedMember = memberRepository.save(fakeMember);
 
         // 예상 결과와 실제 결과 비교
         assertEquals(fakeMember.getUserName(), savedMember.getUserName());

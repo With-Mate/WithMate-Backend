@@ -20,3 +20,5 @@ withmate/gradlew
 .idea/modules.xml
 .idea/modules.xml
 .idea/workspace.xml
+.idea/workspace.xml
+.idea/modules/withmate.main.iml

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/WithMate-BE.iml" filepath="$PROJECT_DIR$/.idea/WithMate-BE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/withmate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/withmate.main.iml" />
     </modules>
   </component>
 </project>

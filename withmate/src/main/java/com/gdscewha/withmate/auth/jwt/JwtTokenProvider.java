@@ -21,7 +21,7 @@ public class JwtTokenProvider {
 
     private final MemberRepository memberRepository;
 
-    private static final long JWT_EXPIRATION_TIME = 1000L * 60 * 60 * 24; //개발 테스트용: 하루
+    private static final long JWT_EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 10; //개발 테스트용: 10일
 
     /* 토큰을 서명하고 검증하는 데 사용되는 비밀 키 */
     @Value("${jwt.secret}")

@@ -5,6 +5,7 @@ import com.gdscewha.withmate.auth.dto.SignUpReqDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(produces = "application/json")
 @Slf4j
 public class AuthController {
     private final MemberRepository memberRepository;
@@ -27,7 +27,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> userSignUp(@RequestBody SignUpReqDto signUpReqDto) {
         log.info("회원가입 진행");
-        String memberName = authService.signUpMember(signUpReqDto);
+        String memberName = authService.memberSignUp(signUpReqDto);
         if (memberName == null)
             return ResponseEntity.badRequest().body("이미 가입된 아이디 혹은 이메일입니다.");
         return ResponseEntity.status(HttpStatus.CREATED.value()).body("회원가입 성공: " + memberName);
@@ -38,7 +38,7 @@ public class AuthController {
     public ResponseEntity<?> userLogin(@RequestBody LoginReqDto loginReqDto) {
         System.out.println("로그인 시작");
         log.info("로그인 시작");
-        String message = authService.loginMember(loginReqDto);
+        String message = authService.memberLogin(loginReqDto);
         if (message.isBlank())
             return ResponseEntity.badRequest().body("로그인에 실패했습니다. 이메일 또는 비밀번호가 일치하는지 확인해주세요.");
         return ResponseEntity.status(HttpStatus.CREATED.value()).body("로그인 성공\n토큰: "+message);
@@ -46,8 +46,11 @@ public class AuthController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> userLogout() {
-        String logoutMessage = authService.logoutMember();
+    public ResponseEntity<?> userLogout(HttpServletRequest request) {
+        String logoutMessage = authService.memberLogout(request);
+        if (logoutMessage == null) {
+            return ResponseEntity.ok().body("토큰이 유효하지 않습니다.");
+        }
         return ResponseEntity.ok().body(logoutMessage);
     }
 

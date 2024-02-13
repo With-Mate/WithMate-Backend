@@ -7,6 +7,7 @@ import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.model.Role;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
-    public String signUpMember(SignUpReqDto signUpReqDto) { //회원가입
+    public String memberSignUp(SignUpReqDto signUpReqDto) { //회원가입
         // id 글자수 조건 등 여기에
         if (memberRepository.existsByUserName(signUpReqDto.getUserName())) {
             return null;
@@ -53,7 +55,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String loginMember(LoginReqDto loginRequestDto) { // 기본 로그인
+    public String memberLogin(LoginReqDto loginRequestDto) { // 기본 로그인
         // 사용자가 입력한 아이디, 비밀번호
         log.info("아이디 비번 get");
         String userName = loginRequestDto.getUserName();
@@ -81,7 +83,12 @@ public class AuthService {
         return null;
     }
 
-    public String logoutMember() {
+    public String memberLogout(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        // 토큰이 유효한지 유효하지 않은지 확인 후 처리
+        if (jwtTokenProvider.validJwtToken(bearerToken) == null){
+            return null;
+        }
         // 현재 사용자의 인증 정보를 제거하여 로그아웃 수행
         SecurityContextHolder.clearContext();
         return "로그아웃 되었습니다.";

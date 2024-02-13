@@ -1,25 +1,18 @@
 package com.gdscewha.withmate.domain.sticker.controller;
 
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
-import com.gdscewha.withmate.common.response.exception.StickerException;
-import com.gdscewha.withmate.domain.matching.entity.Matching;
-import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
-import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
-import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
-import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateDTO;
+import com.gdscewha.withmate.domain.sticker.dto.StickerDetailResDto;
+import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewResDto;
+import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateReqDTO;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.service.StickerService;
-import com.gdscewha.withmate.domain.week.entity.Week;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,9 +26,9 @@ public class StickerController {
     // 보드에서 스티커 미리보기로 보기
     // TODO: 나와 메이트 모두 조회가 되나?
     @GetMapping("/home/board")
-    public ResponseEntity<List<StickerPreviewDto>> getstickerpreview() {
+    public ResponseEntity<List<StickerPreviewResDto>> getstickerpreview() {
         Member member = memberService.getCurrentMember();
-        List<StickerPreviewDto> stickerPreviewDto = stickerService.getStickersForAWeek(member);
+        List<StickerPreviewResDto> stickerPreviewDto = stickerService.getStickersForAWeek(member);
         return ResponseEntity.ok().body(stickerPreviewDto);
     }
 
@@ -50,12 +43,22 @@ public class StickerController {
         return ResponseEntity.ok().body(convertedDTO);
     }
 
-    // 모달 스티커 편집
+    // 편집할 스티커 불러오기
+    @GetMapping("/sticker/edit")
+    public ResponseEntity<?> editSticker(@RequestParam Long id){
+        StickerDetailResDto resDto = stickerService.getSticker(id);
+        if (resDto == null)
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
+    }
+
+    // 스티커 편집하기
     @PatchMapping("/sticker/edit")
-    public ResponseEntity<?> editSticker(@RequestBody StickerUpdateDTO stickerUpdateDTO){
+    public ResponseEntity<?> editSticker(@RequestBody StickerUpdateReqDTO stickerUpdateDTO){
         Sticker editedSticker = stickerService.updateSticker(stickerUpdateDTO);
-        StickerUpdateDTO convertedDTO = stickerService.convertToUpdateDTO(editedSticker);
-        return ResponseEntity.ok().body(convertedDTO);
+        if (editedSticker == null)
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 
     // 스티커 삭제

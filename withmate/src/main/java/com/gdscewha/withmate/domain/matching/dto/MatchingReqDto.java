@@ -1,6 +1,5 @@
 package com.gdscewha.withmate.domain.matching.dto;
 
-import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

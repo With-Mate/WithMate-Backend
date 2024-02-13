@@ -48,10 +48,18 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
         String logoutMessage = authService.memberLogout(request);
-        if (logoutMessage == null) {
-            return ResponseEntity.ok().body("토큰이 유효하지 않습니다.");
-        }
+        if (logoutMessage == null)
+            return ResponseEntity.badRequest().build();
         return ResponseEntity.ok().body(logoutMessage);
+    }
+
+    // 탈퇴
+    @DeleteMapping("/signout")
+    public ResponseEntity<?> userSignOut(HttpServletRequest request) {
+        String signOutMessage = authService.signOutMember(request);
+        if (signOutMessage == null)
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().body(signOutMessage);
     }
 
     /*@GetMapping("/login/oauth2/code/{registrationId}")
@@ -74,13 +82,6 @@ public class AuthController {
         Member member = memberRepository.findMemberByUserName(userName);
 
         return new ResponseEntity<>(member, HttpStatusCode.valueOf(200));
-    }
-
-    // 탈퇴
-    @DeleteMapping("/signout")
-    public ResponseEntity<?> userSignOut() {
-        String signOutMessage = authService.signOutMember();
-        return ResponseEntity.ok().body(signOutMessage);
     }
 
     @GetMapping("/")

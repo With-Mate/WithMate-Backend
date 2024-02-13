@@ -111,8 +111,9 @@ public class MemberService {
         return memberRepository.save(member);
     }
     
-    // 사용자 탈퇴: Member 삭제
-    public void deleteMember(){
+    // 사용자 탈퇴: Current Member 삭제
+    @Transactional
+    public void deleteCurrentMember(){
         Member member = getCurrentMember();
         List<Sticker> stickerList = stickerRepository.findAllByMember(member);
         stickerRepository.deleteAll(stickerList);

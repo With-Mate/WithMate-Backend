@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -94,9 +93,13 @@ public class AuthService {
         return "로그아웃 되었습니다.";
     }
 
-    public String signOutMember() {
+    public String signOutMember(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (jwtTokenProvider.validJwtToken(bearerToken) == null){
+            return null;
+        }
         // 계정 삭제
-        memberService.deleteMember();
+        memberService.deleteCurrentMember();
         // 현재 사용자의 인증 정보를 제거하여 로그아웃 수행
         SecurityContextHolder.clearContext();
         return "계정 탈퇴가 완료되었습니다.";

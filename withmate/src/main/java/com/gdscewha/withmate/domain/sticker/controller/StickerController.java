@@ -63,8 +63,8 @@ public class StickerController {
 
     // 스티커 삭제
     @DeleteMapping("/sticker/delete")
-    public ResponseEntity<?> deleteSticker(@RequestParam Long stickerId){
-        stickerService.deleteSticker(stickerId);
+    public ResponseEntity<?> deleteSticker(@RequestParam Long id){
+        stickerService.deleteSticker(id);
         return ResponseEntity.ok().body("스티커를 삭제했습니다.");
     }
 

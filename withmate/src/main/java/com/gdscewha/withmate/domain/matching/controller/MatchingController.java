@@ -1,7 +1,7 @@
 package com.gdscewha.withmate.domain.matching.controller;
 
 import com.gdscewha.withmate.domain.matching.dto.MatchedResultDto;
-import com.gdscewha.withmate.domain.matching.dto.MatchingReqDto;
+import com.gdscewha.withmate.domain.matching.dto.MatchingInputDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.matching.service.MatchingService;
@@ -30,7 +30,7 @@ public class MatchingController {
         if (member.getIsRelationed())
             return ResponseEntity.ok().header("Location", "/api/home").build();
         // match 가능:
-        MatchingResDto resDto = matchingService.getCurrentMatchingDto();
+        MatchingInputDto resDto = matchingService.getCurrentMatchingDto();
         // 아직 매칭 X
         if (resDto == null)
             return ResponseEntity.noContent().build();
@@ -49,7 +49,7 @@ public class MatchingController {
 
     // 매칭하기
     @PostMapping("/match/relate")
-    public ResponseEntity<?> postNewMatchingRelation(@RequestBody MatchingReqDto reqDto) {
+    public ResponseEntity<?> postNewMatchingRelation(@RequestBody MatchingInputDto reqDto) {
         // 입력이 잘못 들어옴
         if (!matchingService.checkMatchingAvailability(reqDto))
             return ResponseEntity.badRequest().body("목표 혹은 카테고리가 비어있습니다.");
@@ -60,7 +60,7 @@ public class MatchingController {
 
     // 매칭 대기 등록: 내 매칭 데이터 생성 혹은 업데이트
     @PostMapping("/match/register")
-    public ResponseEntity<?> updateMatchingInfo(@RequestBody MatchingReqDto reqDto) {
+    public ResponseEntity<?> updateMatchingInfo(@RequestBody MatchingInputDto reqDto) {
         // 입력이 잘못 들어옴
         if (!matchingService.checkMatchingAvailability(reqDto))
             return ResponseEntity.badRequest().body("목표 혹은 카테고리가 비어있습니다.");

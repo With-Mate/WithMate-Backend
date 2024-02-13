@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -22,26 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class JourneyController {
     private final MemberService memberService;
     private final JourneyService journeyService;
-    private final JourneyRepository journeyRepository;
-    private final RelationMateService relationMateService;
 
 
-    // 내 현재 여정 조회
+    // 내 n번째 여정 조회
     @GetMapping("/self/journey")
-    public ResponseEntity<?> getMyJourney() {
+    public ResponseEntity<?> getMyNthJourney(@RequestParam(required = false) Long index) {
         Member currentMember = memberService.getCurrentMember();
-        Journey currentJourney = journeyService.getCurrentJourney(currentMember);
-        return ResponseEntity.ok().body(currentJourney);
+        Journey journey = journeyService.getNthJourneyInProfile(currentMember, index);
+        return ResponseEntity.ok().body(journey);
     }
-
-    // 메이트의 현재 여정 조회
+    // 메이트의 n번째 여정 조회
     @GetMapping("/mate/journey")
-    public ResponseEntity<?> getMateJourney() {
-        Member currentMember = memberService.getCurrentMember();
-        Journey currentJourney = journeyService.getCurrentJourney(currentMember);
-        return ResponseEntity.ok().body(currentJourney);
+    public ResponseEntity<?> getMateNthJourney(@RequestParam(required = false) Long index) {
+        Member mate = memberService.getCurrentMate();
+        Journey journey = journeyService.getNthJourneyInProfile(mate, index);
+        return ResponseEntity.ok().body(journey);
     }
 }
+
+
+
+
 
 //TODO:
 // 내 n번째 여정 조회

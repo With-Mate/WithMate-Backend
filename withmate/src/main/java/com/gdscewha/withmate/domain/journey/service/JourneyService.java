@@ -64,4 +64,17 @@ public class JourneyService {
         Integer index = existingJourneyList.size() - 1;
         return existingJourneyList.get(index);
     }
+
+    public Journey getNthJourneyInProfile(Member member, Long journeyNum) {
+        Relation relation = relationMateService.getCurrentRelation(member);
+        if (journeyNum == null) {
+            Journey journey = getCurrentJourney(member);
+            return journey;
+        }
+        else if (journeyNum <= 0) {
+            throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND); // journeyNum은 1에서 시작하므로
+        }
+        Journey journey = getJourneyByRelationAndIndex(relation, journeyNum);
+        return journey;
+    }
 }

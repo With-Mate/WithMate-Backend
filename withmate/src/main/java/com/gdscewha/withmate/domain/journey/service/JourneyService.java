@@ -46,7 +46,7 @@ public class JourneyService {
     }
 
     // 단일 Journey 조회: Relation과 index로
-    public Journey getJourneyByRelationAndIndex(Relation relation, Long index) {//index가 journeynum
+    public Journey getJourneyByRelationAndIndex(Relation relation, Long index) {
         Optional<Journey> journeyOptional = journeyRepository.findByRelationAndJourneyNum(relation, index);
         if (journeyOptional.isPresent())
             return journeyOptional.get();

@@ -42,12 +42,6 @@ public class StickerService {
         return stickerRepository.save(sticker);
     }
 
-    // entity를 StickerCreateDTO로 변환
-    public StickerCreateDTO convertToCreateDTO(Sticker sticker) {
-        return StickerCreateDTO.builder()
-                .title(sticker.getTitle())
-                .build();
-    }
 
     // 스티커 UPDATE 메소드 (제목, 메모, 느낀점)
     public Sticker updateSticker(StickerUpdateDTO stickerUpdateDTO) {
@@ -59,22 +53,13 @@ public class StickerService {
         // 변경 내용 업데이트
         sticker.setTitle(stickerUpdateDTO.getTitle());
         sticker.setContent(stickerUpdateDTO.getContent());
-        // 느낀 점 추가되었는지 확인
+        // 느낀점 추가되었는지 확인
         String impression = stickerUpdateDTO.getImpression();
         if (impression != null && !impression.equals("")) {
             sticker.setImpression(stickerUpdateDTO.getImpression());
             sticker.setImpressionTime(LocalDate.now());
         }
         return stickerRepository.save(sticker);
-    }
-
-    // entity를 StickerUpdateDTO로 변환
-    public StickerUpdateDTO convertToUpdateDTO(Sticker sticker) {
-        return StickerUpdateDTO.builder()
-                .title(sticker.getTitle())
-                .content(sticker.getContent())
-                .impression(sticker.getImpression())
-                .build();
     }
 
     // 스티커 DELETE 메소드

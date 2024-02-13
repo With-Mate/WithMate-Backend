@@ -42,17 +42,3 @@ public class JourneyController {
 }
 
 
-
-
-
-//TODO:
-// 내 n번째 여정 조회
-// 메이트의 n번째 여정 조회
-// 참고 : 밑의 함수는 서비스 코드, 밑 함수 사용하면 될 듯
-// 단일 Journey 조회: Relation과 index로
-//    public Journey getJourneyByRelationAndIndex(Relation relation, Long index) {
-//      Optional<Journey> journeyOptional = journeyRepository.findByRelationAndJourneyNum(relation, index);
-//    if (journeyOptional.isPresent())
-//      return journeyOptional.get();
-//throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND);
-//}

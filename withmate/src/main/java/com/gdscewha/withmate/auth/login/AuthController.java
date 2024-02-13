@@ -27,10 +27,10 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> userSignUp(@RequestBody SignUpReqDto signUpReqDto) {
         log.info("회원가입 진행");
-        String memberName = authService.memberSignUp(signUpReqDto);
-        if (memberName == null)
+        String nickname = authService.memberSignUp(signUpReqDto);
+        if (nickname == null)
             return ResponseEntity.badRequest().body("이미 가입된 아이디 혹은 이메일입니다.");
-        return ResponseEntity.status(HttpStatus.CREATED.value()).body("회원가입 성공: " + memberName);
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body("회원가입 성공: " + nickname);
     }
 
     // 기본 로그인
@@ -41,7 +41,7 @@ public class AuthController {
         String message = authService.memberLogin(loginReqDto);
         if (message.isBlank())
             return ResponseEntity.badRequest().body("로그인에 실패했습니다. 이메일 또는 비밀번호가 일치하는지 확인해주세요.");
-        return ResponseEntity.status(HttpStatus.CREATED.value()).body("로그인 성공\n토큰: "+message);
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body("로그인 성공. 토큰이 발급되었습니다.");
     }
 
     // 로그아웃
@@ -49,7 +49,7 @@ public class AuthController {
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
         String logoutMessage = authService.memberLogout(request);
         if (logoutMessage == null)
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("헤더에 토큰이 없습니다.");
         return ResponseEntity.ok().body(logoutMessage);
     }
 
@@ -58,7 +58,7 @@ public class AuthController {
     public ResponseEntity<?> userSignOut(HttpServletRequest request) {
         String signOutMessage = authService.signOutMember(request);
         if (signOutMessage == null)
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("헤더에 토큰이 없습니다.");
         return ResponseEntity.ok().body(signOutMessage);
     }
 
@@ -80,7 +80,6 @@ public class AuthController {
 
         // 사용자 ID를 이용하여 데이터베이스에서 사용자 정보 조회
         Member member = memberRepository.findMemberByUserName(userName);
-
         return new ResponseEntity<>(member, HttpStatusCode.valueOf(200));
     }
 

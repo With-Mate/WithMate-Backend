@@ -116,11 +116,15 @@ public class StickerService {
         List<StickerPreviewResDto> stickerPreviewDtos = new ArrayList<>();
         for (Sticker sticker : stickerList) {
             String impression = sticker.getImpression();
-            if (impression == null || impression.equals("")) {
-                stickerPreviewDtos.add(new StickerPreviewResDto( // ));
-            } else {
-                stickerPreviewDtos.add(new StickerPreviewResDto( // ));
-            }
+            StickerPreviewResDto previewDto = StickerPreviewResDto.builder()
+                    .id(sticker.getId())
+                    .title(sticker.getTitle())
+                    .stickerColor(sticker.getStickerColor())
+                    .stickerShape(sticker.getStickerShape())
+                    .stickerTop(sticker.getStickerTop())
+                    .stickerLeft(sticker.getStickerLeft())
+                    .build();
+            stickerPreviewDtos.add(previewDto);
         }
         return stickerPreviewDtos;
     }

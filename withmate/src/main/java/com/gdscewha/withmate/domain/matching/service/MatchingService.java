@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,13 +94,19 @@ public class MatchingService {
     }
 
     // 모든 카테고리의 매칭중인 사람들을 조회
-    public List<Matching> getPeopleMatching() {
+    public List<MatchingResDto> getPeopleMatching() {
         Category[] categories = Category.values();
-        List<Matching> matchingList = new ArrayList<>();
-        for(Category c : categories) {
-            matchingList.addAll(matchingRepository.findAllByCategory(c));
+        List<MatchingResDto> matchingResList = new ArrayList<>();
+        for (Category c : categories) {
+            List<Matching> matchingList = matchingRepository.findAllByCategory(c);
+            matchingResList.addAll(convertToMatchingResDtoList(matchingList));
         }
-        return matchingList;
+        return matchingResList;
+    }
+    public List<MatchingResDto> convertToMatchingResDtoList(List<Matching> matchingList) {
+        return matchingList.stream()
+                .map(MatchingResDto::new)
+                .collect(Collectors.toList());
     }
 
     // tryMatching로부터 생성되는 매칭 결과를 컨트롤러에 반환

@@ -41,7 +41,7 @@ public class MatchingController {
     // 매핑 가능한 사람 보기 (카테고리 순서대로 반환됨)
     @GetMapping("/match/people")
     public ResponseEntity<?> getPeopleMatching() {
-        List<Matching> matchingList = matchingService.getPeopleMatching();
+        List<MatchingResDto> matchingList = matchingService.getPeopleMatching();
         if (matchingList.isEmpty())
             return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다"); // 사람이 없음; 매칭 대기 띄워야 함
         return ResponseEntity.ok().body(matchingList);

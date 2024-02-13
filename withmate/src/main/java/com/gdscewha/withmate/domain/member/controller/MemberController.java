@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 public class MemberController {
-
     private final MemberService memberService;
 
     // 내 프로필 조회

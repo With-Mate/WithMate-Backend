@@ -1,9 +1,9 @@
 package com.gdscewha.withmate.domain.member.service;
 
-import com.gdscewha.withmate.auth.login.AuthService;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MemberException;
 import com.gdscewha.withmate.common.validation.ValidationService;
+import com.gdscewha.withmate.domain.member.dto.MemberCreateDto;
 import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

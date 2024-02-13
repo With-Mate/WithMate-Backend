@@ -60,7 +60,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:5174");
         configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedMethod("*"); //모든 Method 허용(POST, GET, ...)
         configuration.addAllowedHeader("*"); //모든 Header 허용

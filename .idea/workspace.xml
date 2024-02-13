@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9649bfa0-97b5-43eb-a56d-038274780d29" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerCreateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerCreateDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerUpdateDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/service/StickerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/service/StickerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,16 +51,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/journey-controller/ds&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feat/sticker-controller2/ds",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/withmate/src/main/resources" />

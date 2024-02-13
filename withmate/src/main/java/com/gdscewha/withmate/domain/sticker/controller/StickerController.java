@@ -1,24 +1,17 @@
 package com.gdscewha.withmate.domain.sticker.controller;
 
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
-import com.gdscewha.withmate.common.response.exception.StickerException;
-import com.gdscewha.withmate.domain.matching.entity.Matching;
-import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
-import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
-import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
 import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewDto;
 import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateDTO;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.service.StickerService;
-import com.gdscewha.withmate.domain.week.entity.Week;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +24,18 @@ public class StickerController {
     private final StickerService stickerService;
 
     // 보드에서 스티커 미리보기로 보기
-    // TODO: 나와 메이트 모두 조회가 되나?
     @GetMapping("/home/board")
-    public ResponseEntity<List<StickerPreviewDto>> getstickerpreview() {
+    public ResponseEntity<List<StickerPreviewDto>> getStickerPreview() {
         Member member = memberService.getCurrentMember();
-        List<StickerPreviewDto> stickerPreviewDto = stickerService.getStickersForAWeek(member);
-        return ResponseEntity.ok().body(stickerPreviewDto);
+        List<StickerPreviewDto> myStickerPreviewDto = stickerService.getStickersForAWeek(member);
+        Member mate = memberService.getCurrentMate();
+        List<StickerPreviewDto> mateStickerPreviewDto = stickerService.getStickersForAWeek(mate);
+        // 나와 메이트의 스티커 합쳐서 반환
+        List<StickerPreviewDto> combinedStickerPreviews = new ArrayList<>();
+        combinedStickerPreviews.addAll(myStickerPreviewDto);
+        combinedStickerPreviews.addAll(mateStickerPreviewDto);
+
+        return ResponseEntity.ok().body(combinedStickerPreviews);
     }
 
 

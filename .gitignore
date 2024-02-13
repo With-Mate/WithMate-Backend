@@ -8,3 +8,10 @@ withmate/src/main/resources/application-local.yml
 .idea/misc.xml
 .idea/workspace.xml
 
+.idea/misc.xml
+.idea/workspace.xml
+.idea/workspace.xml
+.idea/compiler.xml
+.idea/gradle.xml
+*.xml
+.idea/workspace.xml

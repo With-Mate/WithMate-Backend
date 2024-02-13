@@ -4,6 +4,7 @@ import com.gdscewha.withmate.auth.login.AuthService;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MemberException;
 import com.gdscewha.withmate.common.validation.ValidationService;
+import com.gdscewha.withmate.domain.journey.entity.Journey;
 import com.gdscewha.withmate.domain.member.dto.MemberProfileDto;
 import com.gdscewha.withmate.domain.member.dto.MemberSettingsDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
@@ -38,13 +39,8 @@ public class MemberService {
     }
     // 메이트의 프로필 정보 조회
     public MemberProfileDto getMateProfile() {
-        MemberRelation myMR = mRService.findLastMROfMember(getCurrentMember());
-        if (myMR == null)
-            return null; // 반환
-        MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, myMR.getRelation());
-        if (mateMR == null)
-            return null; // 반환
-        return getMemberProfile(mateMR.getMember().getId());
+        Member mate = getCurrentMate();
+        return getMemberProfile(mate.getId());
     }
 
     // 단일 유저 프로필 정보 조회 - TODO: 현재는 멤버 아이디를 LONG으로 받고 있음.
@@ -91,6 +87,16 @@ public class MemberService {
         return member;
     }
 
+    public Member getCurrentMate() {
+        MemberRelation myMR = mRService.findLastMROfMember(getCurrentMember());
+        if (myMR == null)
+            return null; // 반환
+        MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, myMR.getRelation());
+        if (mateMR == null)
+            return null; // 반환
+        return mateMR.getMember();
+    }
+
     // 테스트 멤버 저장(임시) - 테스트용
     public Member saveTestMember() {
         Member member = Member.builder()
@@ -114,5 +120,4 @@ public class MemberService {
         mRRepository.deleteAll(memberRelationList);
         memberRepository.delete(member);
     }
-
 }

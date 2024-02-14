@@ -2,17 +2,17 @@ package com.gdscewha.withmate.domain.sticker.dto;
 
 import lombok.*;
 
+
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StickerResDto {
+public class StickerUpdateReqDTO {
     private Long id;
     private String title;
     private String content;
-    private String creationTime;
     private String impression;
-    private String impressionTime;
-    private Boolean isMine;
+    // 스티커 색상
+    private String stickerColor;
 }

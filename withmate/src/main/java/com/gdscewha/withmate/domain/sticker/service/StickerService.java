@@ -6,9 +6,9 @@ import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
-import com.gdscewha.withmate.domain.sticker.dto.StickerResDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateDTO;
+import com.gdscewha.withmate.domain.sticker.dto.StickerDetailResDto;
+import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewResDto;
+import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateReqDTO;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import com.gdscewha.withmate.domain.week.entity.Week;
@@ -36,6 +36,10 @@ public class StickerService {
                 .stickerNum(currentWeek.getStickerCount() + 1)
                 .title(stickerCreateDTO.getTitle())
                 .creationTime(LocalDate.now())
+                .stickerColor(stickerCreateDTO.getStickerColor())
+                .stickerShape(stickerCreateDTO.getStickerShape())
+                .stickerTop(stickerCreateDTO.getStickerTop())
+                .stickerLeft(stickerCreateDTO.getStickerLeft())
                 .week(currentWeek)
                 .member(member)
                 .build();
@@ -50,7 +54,7 @@ public class StickerService {
     }
 
     // 스티커 UPDATE 메소드 (제목, 메모, 느낀점)
-    public Sticker updateSticker(StickerUpdateDTO stickerUpdateDTO) {
+    public Sticker updateSticker(StickerUpdateReqDTO stickerUpdateDTO) {
         Member currentMember = memberService.getCurrentMember();
         // 스티커 id로 스티커를 찾음
         Sticker sticker = validationService.valSticker(stickerUpdateDTO.getId());
@@ -59,6 +63,7 @@ public class StickerService {
         // 변경 내용 업데이트
         sticker.setTitle(stickerUpdateDTO.getTitle());
         sticker.setContent(stickerUpdateDTO.getContent());
+        sticker.setStickerColor(stickerUpdateDTO.getStickerColor());
         // 느낀 점 추가되었는지 확인
         String impression = stickerUpdateDTO.getImpression();
         if (impression != null && !impression.equals("")) {
@@ -68,9 +73,9 @@ public class StickerService {
         return stickerRepository.save(sticker);
     }
 
-    // entity를 StickerUpdateDTO로 변환
-    public StickerUpdateDTO convertToUpdateDTO(Sticker sticker) {
-        return StickerUpdateDTO.builder()
+    // entity를 StickerUpdateReqTO로 변환
+    public StickerUpdateReqDTO convertToUpdateDTO(Sticker sticker) {
+        return StickerUpdateReqDTO.builder()
                 .title(sticker.getTitle())
                 .content(sticker.getContent())
                 .impression(sticker.getImpression())
@@ -89,10 +94,10 @@ public class StickerService {
     }
 
     // 단일 스티커 조회 메소드 - 내 것인지 상대 것인지 확인함
-    public StickerResDto getSticker(Long stickerId){
+    public StickerDetailResDto getSticker(Long stickerId){
         Sticker sticker = validationService.valSticker(stickerId);
         Member currentMember = memberService.getCurrentMember();
-        StickerResDto stickerMyResDto = StickerResDto.builder()
+        StickerDetailResDto stickerMyResDto = StickerDetailResDto.builder()
                 .id(stickerId)
                 .title(sticker.getTitle())
                 .content(sticker.getContent())
@@ -105,17 +110,21 @@ public class StickerService {
     }
 
     // 이번 주 스티커 미리보기로 조회 메소드
-    public List<StickerPreviewDto> getStickersForAWeek(Member member) {
+    public List<StickerPreviewResDto> getStickersForAWeek(Member member) {
         Week week = weekService.getCurrentWeek(member);
         List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
-        List<StickerPreviewDto> stickerPreviewDtos = new ArrayList<>();
+        List<StickerPreviewResDto> stickerPreviewDtos = new ArrayList<>();
         for (Sticker sticker : stickerList) {
             String impression = sticker.getImpression();
-            if (impression == null || impression.equals("")) {
-                stickerPreviewDtos.add(new StickerPreviewDto(sticker.getId(), sticker.getTitle(), false));
-            } else {
-                stickerPreviewDtos.add(new StickerPreviewDto(sticker.getId(), sticker.getTitle(), true));
-            }
+            StickerPreviewResDto previewDto = StickerPreviewResDto.builder()
+                    .id(sticker.getId())
+                    .title(sticker.getTitle())
+                    .stickerColor(sticker.getStickerColor())
+                    .stickerShape(sticker.getStickerShape())
+                    .stickerTop(sticker.getStickerTop())
+                    .stickerLeft(sticker.getStickerLeft())
+                    .build();
+            stickerPreviewDtos.add(previewDto);
         }
         return stickerPreviewDtos;
     }

@@ -4,7 +4,7 @@ import com.gdscewha.withmate.common.response.exception.CategoryException;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MatchingException;
 import com.gdscewha.withmate.domain.matching.dto.MatchedResultDto;
-import com.gdscewha.withmate.domain.matching.dto.MatchingReqDto;
+import com.gdscewha.withmate.domain.matching.dto.MatchingInputDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.matching.repository.MatchingRepository;
@@ -17,11 +17,11 @@ import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,15 @@ public class MatchingService {
     private final MemberRelationService memberRelationService;
     private final RelationMateService relationMateService;
 
-    public Boolean checkMatchingAvailability(MatchingReqDto reqDto) {
+
+    // 내 매칭 받아오기 (MatchingResDto 반환, 존재하지 않으면 null 반환)
+    public MatchingInputDto getCurrentMatchingDto() {
+        Member member = memberService.getCurrentMember();
+        Optional<Matching> matchingOptional = matchingRepository.findByMember(member);
+        return matchingOptional.map(MatchingInputDto::new).orElse(null);
+    }
+    // 컨트롤러의 입력을 확인
+    public Boolean checkMatchingAvailability(MatchingInputDto reqDto) {
         // goal이 비어있음
         if (reqDto.getGoal().isBlank() || reqDto.getGoal() == null)
             return false;
@@ -43,15 +51,8 @@ public class MatchingService {
         return true;
     }
 
-    // 내 매칭 받아오기 (MatchingResDto 반환, 존재하지 않으면 null 반환)
-    public MatchingResDto getCurrentMatchingDto() {
-        Member member = memberService.getCurrentMember();
-        Optional<Matching> matchingOptional = matchingRepository.findByMember(member);
-        return matchingOptional.map(MatchingResDto::new).orElse(null);
-    }
-
     // 내 매칭을 생성 혹은 기존 매칭 업데이트
-    public Matching createOrUpdateMatching(MatchingReqDto reqDto) {
+    public Matching createOrUpdateMatching(MatchingInputDto reqDto) {
         Member member = memberService.getCurrentMember();
         if (member.getMatching() == null) {
             // 매칭한 적 없을 때 생성
@@ -63,7 +64,7 @@ public class MatchingService {
     }
 
     // 새 매칭 생성 (매칭을 하지 않았던 사람)
-    public Matching createMatching(Member member, MatchingReqDto reqDto) {
+    public Matching createMatching(Member member, MatchingInputDto reqDto) {
         Matching matching = Matching.builder()
                 .goal(reqDto.getGoal())
                 .category(reqDto.getCategory())
@@ -73,8 +74,7 @@ public class MatchingService {
     }
 
     // 매칭 객체 업데이트하기 (전에 매칭을 했던 사람) - 목표, 카테고리 업데이트
-
-    public Matching updateMatching(Matching matching, MatchingReqDto reqDto){
+    public Matching updateMatching(Matching matching, MatchingInputDto reqDto){
         matching.setGoal(reqDto.getGoal());
         matching.setCategory(reqDto.getCategory());
         return matchingRepository.save(matching);
@@ -93,17 +93,23 @@ public class MatchingService {
     }
 
     // 모든 카테고리의 매칭중인 사람들을 조회
-    public List<Matching> getPeopleMatching() {
+    public List<MatchingResDto> getPeopleMatching() {
         Category[] categories = Category.values();
-        List<Matching> matchingList = new ArrayList<>();
-        for(Category c : categories) {
-            matchingList.addAll(matchingRepository.findAllByCategory(c));
+        List<MatchingResDto> matchingResList = new ArrayList<>();
+        for (Category c : categories) {
+            List<Matching> matchingList = matchingRepository.findAllByCategory(c);
+            matchingResList.addAll(convertToMatchingResDtoList(matchingList));
         }
-        return matchingList;
+        return matchingResList;
+    }
+    public List<MatchingResDto> convertToMatchingResDtoList(List<Matching> matchingList) {
+        return matchingList.stream()
+                .map(MatchingResDto::new)
+                .collect(Collectors.toList());
     }
 
     // tryMatching로부터 생성되는 매칭 결과를 컨트롤러에 반환
-    public MatchedResultDto getMatchedResult(MatchingReqDto reqDto) {
+    public MatchedResultDto getMatchedResult(MatchingInputDto reqDto) {
         Matching myMatching = createOrUpdateMatching(reqDto);   // 내 매칭 생성
         List<Matching> matchingList = relateMatesByCategory(reqDto.getCategory(), myMatching);  // 카테고리로 Mates 관계 맺기
         return new MatchedResultDto(matchingList);

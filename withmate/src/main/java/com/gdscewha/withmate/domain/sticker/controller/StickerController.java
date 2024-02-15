@@ -3,6 +3,8 @@ package com.gdscewha.withmate.domain.sticker.controller;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
+import com.gdscewha.withmate.domain.relation.dto.RelationHomeDto;
+import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
 import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewDto;
 import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateDTO;
@@ -22,6 +24,7 @@ public class StickerController {
 
     private final MemberService memberService;
     private final StickerService stickerService;
+    private final RelationMateService relationMateService;
 
     // 보드에서 스티커 미리보기로 보기
     @GetMapping("/home/board")
@@ -36,6 +39,17 @@ public class StickerController {
         combinedStickerPreviews.addAll(mateStickerPreviewDto);
 
         return ResponseEntity.ok().body(combinedStickerPreviews);
+    }
+
+
+
+    // 내 이름, 목표 와 메이트 이름과 목표 (누르면 메이트 프로필로?)
+    @GetMapping("/sticker/relation")
+    public ResponseEntity<?> getMeAndMateInfo() {
+        RelationHomeDto relationHomeDto = relationMateService.getHomeInfo();
+        if (relationHomeDto == null)
+            return ResponseEntity.ok().header("Location", "/api/match").build();
+        return ResponseEntity.ok().body(relationHomeDto);
     }
 
 

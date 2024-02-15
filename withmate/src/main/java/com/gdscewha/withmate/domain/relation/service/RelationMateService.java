@@ -98,7 +98,7 @@ public class RelationMateService {
 
         return RelationManageDto.builder()
                 .startDate(relation.getStartDate().toString())
-                .proceedingTime(daysDifference)
+                .proceedingTime(daysDifference + 1) // 차이에서 하루를 더한 날짜
                 .myMessage(myMR.getMessage())
                 .mateName(mateMR.getMember().getNickname())
                 .mateCategory(mateMR.getCategory().toString())

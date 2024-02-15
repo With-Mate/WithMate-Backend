@@ -3,6 +3,8 @@ package com.gdscewha.withmate.domain.matching.service;
 import com.gdscewha.withmate.common.response.exception.CategoryException;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MatchingException;
+import com.gdscewha.withmate.domain.journey.entity.Journey;
+import com.gdscewha.withmate.domain.journey.service.JourneyService;
 import com.gdscewha.withmate.domain.matching.dto.MatchedResultDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingInputDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
@@ -15,6 +17,9 @@ import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService
 import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
+import com.gdscewha.withmate.domain.sticker.service.StickerService;
+import com.gdscewha.withmate.domain.week.entity.Week;
+import com.gdscewha.withmate.domain.week.service.WeekService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +38,10 @@ public class MatchingService {
     private final MemberService memberService;
     private final MemberRelationService memberRelationService;
     private final RelationMateService relationMateService;
+    // Relation 만들 때 필요한 Service들
+    private final JourneyService journeyService;
+    private final WeekService weekService;
+    private final StickerService stickerService;
 
 
     // 내 매칭 받아오기 (MatchingResDto 반환, 존재하지 않으면 null 반환)
@@ -154,16 +163,19 @@ public class MatchingService {
             memberList.add(me);
 
             // Relation 생성, MemberRelationPair 생성
-            Relation pairRelation = relationMateService.createRelation();
-            memberRelationService.createMemberRelationPair(mateList, memberList, pairRelation);
-            // Matching 삭제
-            //matchingRepository.deleteAll(matchingList);
+            Relation relation = relationMateService.createRelation();
+            memberRelationService.createMemberRelationPair(mateList, memberList, relation);
+
+            // 첫번째 Journey 생성
+            Journey journey = journeyService.createJourney(relation);
+            // 첫번째 Week 생성
+            Week week = weekService.createWeek();
 
             // Member들의 isRelationed를 true로 업데이트 후 저장
             mate.setIsRelationed(true);
             me.setIsRelationed(true);
 
-            // 각 멤버에 Matching null로
+            // 각 멤버에 Matching null로, Matching 삭제
             memberRepository.save(deleteMatching(mate));
             memberRepository.save(deleteMatching(me));
             // 수정된 Matching 리스트 반환

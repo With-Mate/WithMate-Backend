@@ -6,16 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9649bfa0-97b5-43eb-a56d-038274780d29" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/controller/MatchingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/controller/MatchingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/dto/MatchingReqDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/dto/MatchingInputDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/service/MatchingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/matching/service/MatchingService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerCreateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerCreateDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerPreviewDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerPreviewResDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerResDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerDetailResDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/dto/StickerUpdateReqDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/entity/Sticker.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/entity/Sticker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/service/StickerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/service/StickerService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +57,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging feat/sticker-controller2/ds",
+    "git-widget-placeholder": "feat/sticker-controller2/ds",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
 }]]></component>

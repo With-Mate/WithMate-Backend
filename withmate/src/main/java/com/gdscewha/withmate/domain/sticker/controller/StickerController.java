@@ -54,8 +54,8 @@ public class StickerController {
     }
 
     // 편집할 스티커 불러오기
-    @GetMapping("/sticker/edit")
-    public ResponseEntity<?> editSticker(@RequestParam Long id){
+    @GetMapping("/sticker/select")
+    public ResponseEntity<?> selectedSticker(@RequestParam Long id){
         StickerDetailResDto resDto = stickerService.getSticker(id);
         if (resDto == null)
             return ResponseEntity.badRequest().build();

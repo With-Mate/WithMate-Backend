@@ -27,7 +27,7 @@ public class WeekService {
         if (journey == null)
             throw new WeekException(ErrorCode.JOURNEY_NOT_FOUND);
         Week week = Week.builder()
-                .weekNum(journey.getWeekCount() + 1) // 처음에 1L
+                .weekNum(journey.getWeekCount()) // 처음에 1L (위에서 업데이트)
                 .weekStartDate(LocalDate.now())
                 .stickerCount(0L) // 처음에 0L
                 .journey(journey)

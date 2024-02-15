@@ -33,7 +33,7 @@ public class StickerService {
         Member member = memberService.getCurrentMember();
         Week currentWeek = weekService.updateStickerCountOfCurrentWeek(1L);
         Sticker sticker = Sticker.builder()
-                .stickerNum(currentWeek.getStickerCount() + 1)
+                .stickerNum(currentWeek.getStickerCount() + 1) // 처음에 1L
                 .title(stickerCreateDTO.getTitle())
                 .creationTime(LocalDate.now())
                 .stickerColor(stickerCreateDTO.getStickerColor())

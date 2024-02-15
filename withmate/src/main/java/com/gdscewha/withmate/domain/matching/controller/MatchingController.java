@@ -72,9 +72,7 @@ public class MatchingController {
     // 매칭 대기 취소: 내 매칭 삭제
     @DeleteMapping("/match/cancel")
     public ResponseEntity<?> cancelMatching() {
-        Matching matching = matchingService.deleteMatching();
-        if (matching == null)
-            return ResponseEntity.ok().body("취소할 Matching이 없습니다.");
-        return ResponseEntity.ok().body("기존 matching을 취소했습니다.");
+        String cancelMessage = matchingService.deleteMyMatching();
+        return ResponseEntity.ok().body(cancelMessage);
     }
 }

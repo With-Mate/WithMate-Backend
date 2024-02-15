@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,10 +58,8 @@ public class AuthService {
     @Transactional
     public String memberLogin(LoginReqDto loginRequestDto) { // 기본 로그인
         // 사용자가 입력한 아이디, 비밀번호
-        log.info("아이디 비번 get");
         String userName = loginRequestDto.getUserName();
         String password = loginRequestDto.getPasswd();
-        log.info("토큰");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userName, password);
         // 사용자 인증
         log.info("사용자 인증 진행");

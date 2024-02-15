@@ -17,6 +17,7 @@ import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,10 @@ public class MatchingService {
                 .category(reqDto.getCategory())
                 .member(member)
                 .build();
-        return matchingRepository.save(matching);
+        matchingRepository.save(matching);
+        member.setMatching(matching);
+        memberRepository.save(member);
+        return matching;
     }
 
     // 매칭 객체 업데이트하기 (전에 매칭을 했던 사람) - 목표, 카테고리 업데이트
@@ -81,15 +85,25 @@ public class MatchingService {
     }
 
     // 내 매칭 삭제 (매칭 취소)
-    public Matching deleteMatching() {
+    public String deleteMyMatching() {
         Member member = memberService.getCurrentMember();
         if (member.getMatching() != null) {
             matchingRepository.delete(member.getMatching());
             member.setMatching(null);
             memberRepository.save(member);
-            return member.getMatching();
+            return "기존 matching을 취소했습니다.";
         }
-        return null;
+        return "취소할 Matching이 없습니다.";
+    }
+
+    // 매칭 삭제
+    public Member deleteMatching(Member member) {
+        if (member.getMatching() != null) {
+            matchingRepository.delete(member.getMatching());
+            member.setMatching(null);
+            memberRepository.save(member);
+        }
+        return member;
     }
 
     // 모든 카테고리의 매칭중인 사람들을 조회
@@ -104,7 +118,10 @@ public class MatchingService {
     }
     public List<MatchingResDto> convertToMatchingResDtoList(List<Matching> matchingList) {
         return matchingList.stream()
-                .map(MatchingResDto::new)
+                .map(matching -> {
+                    Member member = memberRepository.findMemberByMatching(matching);
+                    return new MatchingResDto(matching, member);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -116,6 +133,7 @@ public class MatchingService {
     }
 
     // Matching으로 Mates 관계 맺기
+    @Transactional
     public List<Matching> relateMatesByCategory(Category category, Matching myMatching) {
         if (category == null)
             throw new CategoryException(ErrorCode.CATEGORY_NOT_FOUND);
@@ -124,28 +142,30 @@ public class MatchingService {
         // matchingList에 2개 이상이어야 매칭 가능
         if (matchingList.size() >= 2){
             Matching mateMatching = matchingList.get(0);
-            Member mate = mateMatching.getMember();
+            Member mate = memberRepository.findMemberByMatching(mateMatching);
             Member me = memberService.getCurrentMember();
             // mate 탈퇴시 matching도 삭제되므로 유효한 멤버
 
             List<Matching> mateList = new ArrayList<>(); // 메이트 리스트
             mateList.add(mateMatching);
             mateList.add(myMatching);
+            List<Member> memberList = new ArrayList<>();
+            memberList.add(mate);
+            memberList.add(me);
 
             // Relation 생성, MemberRelationPair 생성
             Relation pairRelation = relationMateService.createRelation();
-            memberRelationService.createMemberRelationPair(mateList, pairRelation);
+            memberRelationService.createMemberRelationPair(mateList, memberList, pairRelation);
             // Matching 삭제
-            matchingRepository.deleteAll(matchingList);
+            //matchingRepository.deleteAll(matchingList);
 
             // Member들의 isRelationed를 true로 업데이트 후 저장
             mate.setIsRelationed(true);
             me.setIsRelationed(true);
-            // 각 멤버에 Matching set 하기
-            mate.setMatching(mateMatching);
-            me.setMatching(myMatching);
-            memberRepository.save(mate);
-            memberRepository.save(me);
+
+            // 각 멤버에 Matching null로
+            memberRepository.save(deleteMatching(mate));
+            memberRepository.save(deleteMatching(me));
             // 수정된 Matching 리스트 반환
             return mateList;
         } else {

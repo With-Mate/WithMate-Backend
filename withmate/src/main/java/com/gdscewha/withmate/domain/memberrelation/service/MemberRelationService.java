@@ -43,7 +43,7 @@ public class MemberRelationService {
     }
 
     // MR 두 개 만들고 저장, 두 Member의 isRelationed는 MatchingService에서 바꿔줌
-    public void createMemberRelationPair(List<Matching> matchingList, Relation relation){
+    public void createMemberRelationPair(List<Matching> matchingList, List<Member> memberList, Relation relation){
         Matching matching1 = matchingList.get(0);
         Matching matching2 = matchingList.get(1);
         
@@ -51,14 +51,14 @@ public class MemberRelationService {
                 .goal(matching1.getGoal())
                 .category(matching1.getCategory())
                 // message is nullable
-                .member(matching1.getMember())
+                .member(memberList.get(0))
                 .relation(relation)
                 .build();
         MemberRelation mateMR = MemberRelation.builder()
                 .goal(matching2.getGoal())
                 .category(matching2.getCategory())
                 // message is nullable
-                .member(matching2.getMember())
+                .member(memberList.get(1))
                 .relation(relation)
                 .build();
         mRRepository.save(myMR);

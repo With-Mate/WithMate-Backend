@@ -26,7 +26,7 @@ public class StickerController {
     private final RelationMateService relationMateService;
 
     // 보드에서 스티커 미리보기로 보기
-    @GetMapping("/home/board")
+    @GetMapping("/sticker/board")
     public ResponseEntity<List<StickerPreviewResDto>> getstickerpreview() {
         Member member = memberService.getCurrentMember();
         List<StickerPreviewResDto> stickerPreviewDto = stickerService.getStickersForAWeek(member);
@@ -41,8 +41,7 @@ public class StickerController {
             return ResponseEntity.ok().header("Location", "/api/match").build();
         return ResponseEntity.ok().body(relationHomeDto);
     }
-
-
+    
     // 모달 스티커 작성
     @PostMapping("/sticker/create")
     public ResponseEntity<?> createSticker(@RequestBody StickerCreateDTO stickerCreateDTO){

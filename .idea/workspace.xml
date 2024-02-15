@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9649bfa0-97b5-43eb-a56d-038274780d29" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withmate/src/main/java/com/gdscewha/withmate/domain/sticker/controller/StickerController.java" afterDir="false" />
     </list>
@@ -65,6 +66,45 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/withmate/src/main/resources" />
     </key>
+  </component>
+  <component name="RunManager" selected="Application.Unnamed">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="zulu-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <envs>
+        <env name="DB_PASSWORD" value="3470" />
+        <env name="DB_URL" value="jdbc:mysql://34.121.200.136:3306/withmate-db?useSSL=false&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC" />
+        <env name="DB_USERNAME" value="root" />
+        <env name="GOOGLE_APPLICATION_CREDENTIALS" value="C:\Users\SAMSUNG\Documents\GitHub\WithMate-BE\withmate\src\main\resources\withmate-44595f367641.json" />
+      </envs>
+      <option name="MAIN_CLASS_NAME" value="com.gdscewha.withmate.WithMateApplication" />
+      <module name="withmate.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WithMateApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.gdscewha.withmate.WithMateApplication" />
+      <module name="withmate.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.gdscewha.withmate.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Unnamed" />
+      <item itemvalue="Application.WithMateApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.WithMateApplication" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

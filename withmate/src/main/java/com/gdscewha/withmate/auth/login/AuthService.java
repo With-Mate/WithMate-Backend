@@ -10,6 +10,7 @@ import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -63,23 +64,28 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userName, password);
         // 사용자 인증
         log.info("사용자 인증 진행");
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // 사용자 인증이 완료된 경우
-        if (authentication.isAuthenticated()) {
-            log.info("사용자 인증 완료");
-            /* 사용자가 인증되면 AuthDetails 객체가 생성되어 Authentication 객체에 포함되고,
-             * 이 AuthDetails 객체를 통해서 인증된 사용자의 정보를 확인 가능 */
-            AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
-            Member member = authDetails.getMember();
-            Long authenticatedId  = member.getId();
-            String authenticatedUserName = member.getUserName();
-            // 로그인 시간 업데이트
-            memberRepository.save(member.updateLoginDate());
-            // JWT 토큰 반환
-            log.info("JWT 토큰 반환");
-            return jwtTokenProvider.generateJwtToken(authenticatedId, authenticatedUserName);
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            // 사용자 인증이 완료된 경우
+            if (authentication.isAuthenticated()) {
+                log.info("사용자 인증 완료");
+                /* 사용자가 인증되면 AuthDetails 객체가 생성되어 Authentication 객체에 포함되고,
+                 * 이 AuthDetails 객체를 통해서 인증된 사용자의 정보를 확인 가능 */
+                AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
+                Member member = authDetails.getMember();
+                Long authenticatedId = member.getId();
+                String authenticatedUserName = member.getUserName();
+                // 로그인 시간 업데이트
+                memberRepository.save(member.updateLoginDate());
+                // JWT 토큰 반환
+                log.info("JWT 토큰 반환");
+                return jwtTokenProvider.generateJwtToken(authenticatedId, authenticatedUserName);
+            }
+            return null;
+        } catch(AuthenticationException e){
+            // 인증 실패 시
+            return null;
         }
-        return null;
     }
 
     public String memberLogout(HttpServletRequest request) {

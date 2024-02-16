@@ -1,5 +1,6 @@
 package com.gdscewha.withmate.domain.sticker.dto;
 
+import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +19,15 @@ public class StickerPreviewResDto {
     // 스티커 좌표
     private Long stickerTop;
     private Long stickerLeft;
+
+    public static StickerPreviewResDto toDto(Sticker sticker){
+        return StickerPreviewResDto.builder()
+                .id(sticker.getId())
+                .title(sticker.getTitle())
+                .stickerColor(sticker.getStickerColor())
+                .stickerShape(sticker.getStickerShape())
+                .stickerTop(sticker.getStickerTop())
+                .stickerLeft(sticker.getStickerLeft())
+                .build();
+    }
 }

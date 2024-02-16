@@ -1,5 +1,6 @@
 package com.gdscewha.withmate.domain.sticker.dto;
 
+import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import lombok.*;
 
 
@@ -12,6 +13,5 @@ public class StickerUpdateReqDTO {
     private String title;
     private String content;
     private String impression;
-    // 스티커 색상
     private String stickerColor;
 }

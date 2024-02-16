@@ -64,18 +64,18 @@ public class StickerService {
                 .member(member)
                 .build();
         stickerRepository.save(sticker);
-        return StickerPreviewResDto.builder()
-                .id(sticker.getId())
-                .title(sticker.getTitle())
-                .stickerColor(sticker.getStickerColor())
-                .stickerShape(sticker.getStickerShape())
-                .stickerTop(sticker.getStickerTop())
-                .stickerLeft(sticker.getStickerLeft())
-                .build();
+        return StickerPreviewResDto.toDto(sticker);
     }
 
-    // 스티커 UPDATE 메소드 (제목, 메모, 느낀점)
-    public Sticker updateSticker(StickerUpdateReqDTO stickerUpdateDTO) {
+    // 단일 스티커 조회 메소드 - 내 것인지 상대 것인지 확인함
+    public StickerDetailResDto getSticker(Long stickerId){
+        Sticker sticker = validationService.valSticker(stickerId);
+        Member currentMember = memberService.getCurrentMember();
+        return StickerDetailResDto.toDto(sticker, sticker.getMember() == currentMember);
+    }
+
+    // 단일 스티커 UPDATE 메소드 (제목, 메모, 느낀점)
+    public StickerDetailResDto updateSticker(StickerUpdateReqDTO stickerUpdateDTO) {
         Member currentMember = memberService.getCurrentMember();
         // 스티커 id로 스티커를 찾음
         Sticker sticker = validationService.valSticker(stickerUpdateDTO.getId());
@@ -91,7 +91,8 @@ public class StickerService {
             sticker.setImpression(stickerUpdateDTO.getImpression());
             sticker.setImpressionTime(LocalDate.now());
         }
-        return stickerRepository.save(sticker);
+        stickerRepository.save(sticker);
+        return StickerDetailResDto.toDto(sticker, sticker.getMember() == currentMember);
     }
 
     // 스티커 DELETE 메소드
@@ -104,33 +105,4 @@ public class StickerService {
         weekService.updateStickerCountOfCurrentWeek(-1L);
         stickerRepository.delete(sticker);
     }
-
-    // 단일 스티커 조회 메소드 - 내 것인지 상대 것인지 확인함
-    public StickerDetailResDto getSticker(Long stickerId){
-        Sticker sticker = validationService.valSticker(stickerId);
-        Member currentMember = memberService.getCurrentMember();
-        StickerDetailResDto stickerMyResDto = StickerDetailResDto.builder()
-                .id(stickerId)
-                .title(sticker.getTitle())
-                .content(sticker.getContent())
-                .creationTime(sticker.getCreationTime().toString())
-                .impression(sticker.getImpression())
-                .isMine(null)
-                .stickerColor(sticker.getStickerColor())
-                .stickerShape(sticker.getStickerShape())
-                .build();
-        LocalDate impressionTime = sticker.getImpressionTime();
-        if (impressionTime != null) {
-            stickerMyResDto.setImpressionTime(impressionTime.toString());
-        }
-        stickerMyResDto.setIsMine(sticker.getMember() == currentMember);
-        return stickerMyResDto;
-    }
-
-    /*// LocalDateTime을 주어진 패턴에 맞게 문자열로 변환하는 메소드
-    public static String formatLocalDate(LocalDate date) {
-        // DateTimeFormatter를 사용하여 LocalDateTime을 문자열로 변환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return date.format(formatter);
-    }*/
 }

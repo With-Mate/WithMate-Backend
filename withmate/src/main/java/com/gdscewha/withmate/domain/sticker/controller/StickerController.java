@@ -60,7 +60,7 @@ public class StickerController {
     // 스티커 편집하기
     @PatchMapping("/sticker/edit")
     public ResponseEntity<?> selectedSticker(@RequestBody StickerUpdateReqDTO stickerUpdateDTO){
-        Sticker editedSticker = stickerService.updateSticker(stickerUpdateDTO);
+        StickerDetailResDto editedSticker = stickerService.updateSticker(stickerUpdateDTO);
         if (editedSticker == null)
             return ResponseEntity.badRequest().body("해당 id의 스티커가 존재하지 않습니다.");
         return ResponseEntity.ok().body(editedSticker);

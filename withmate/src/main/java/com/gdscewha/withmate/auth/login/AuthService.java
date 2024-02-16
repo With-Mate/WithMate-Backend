@@ -74,8 +74,6 @@ public class AuthService {
                 Member member = authDetails.getMember();
                 Long authenticatedId = member.getId();
                 String authenticatedUserName = member.getUserName();
-                // 로그인 시간 업데이트
-                memberRepository.save(member.updateLoginDate());
                 // JWT 토큰 반환
                 log.info("JWT 토큰 반환");
                 return jwtTokenProvider.generateJwtToken(authenticatedId, authenticatedUserName);

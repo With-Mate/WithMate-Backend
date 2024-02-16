@@ -41,7 +41,7 @@ public class AuthController {
         String message = authService.memberLogin(loginReqDto);
         if (message.isBlank())
             return ResponseEntity.badRequest().body("로그인에 실패했습니다. 이메일 또는 비밀번호가 일치하는지 확인해주세요.");
-        return ResponseEntity.status(HttpStatus.CREATED.value()).body("로그인 성공. 토큰이 발급되었습니다.");
+        return ResponseEntity.ok().body("로그인 성공. 토큰이 발급되었습니다.");
     }
 
     // 로그아웃

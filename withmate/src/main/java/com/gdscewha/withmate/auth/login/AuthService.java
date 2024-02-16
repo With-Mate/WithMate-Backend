@@ -10,6 +10,7 @@ import com.gdscewha.withmate.domain.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -79,12 +80,11 @@ public class AuthService {
                 log.info("JWT 토큰 반환");
                 return jwtTokenProvider.generateJwtToken(authenticatedId, authenticatedUserName);
             }
+            return null;
         } catch(AuthenticationException e){
-            // 인증 실패 시 예외 처리
-            log.error("사용자 인증 실패: {}", e.getMessage());
+            // 인증 실패 시
             return null;
         }
-        return null;
     }
 
     public String memberLogout(HttpServletRequest request) {

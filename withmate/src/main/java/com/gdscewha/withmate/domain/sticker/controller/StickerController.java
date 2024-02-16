@@ -42,28 +42,28 @@ public class StickerController {
     // 모달 스티커 작성
     @PostMapping("/sticker/create")
     public ResponseEntity<?> createSticker(@RequestBody StickerCreateDTO stickerCreateDTO){
-        StickerPreviewResDto stickerResDto = stickerService.createSticker(stickerCreateDTO);
-        if (stickerResDto == null)
+        StickerPreviewResDto previewResDto = stickerService.createSticker(stickerCreateDTO);
+        if (previewResDto == null)
             return ResponseEntity.badRequest().body("내용은 공백일 수 없습니다.");
-        return ResponseEntity.ok().body(stickerResDto);
+        return ResponseEntity.ok().body(previewResDto);
     }
 
     // 편집할 스티커 불러오기
-    @GetMapping("/sticker/edit")
+    @GetMapping("/sticker/select")
     public ResponseEntity<?> editSticker(@RequestParam Long id){
-        StickerDetailResDto resDto = stickerService.getSticker(id);
-        if (resDto == null)
+        StickerDetailResDto detailResDto = stickerService.getSticker(id);
+        if (detailResDto == null)
             return ResponseEntity.badRequest().body("해당 id의 스티커가 존재하지 않습니다.");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(detailResDto);
     }
 
     // 스티커 편집하기
-    @PatchMapping("/sticker/select")
+    @PatchMapping("/sticker/edit")
     public ResponseEntity<?> selectedSticker(@RequestBody StickerUpdateReqDTO stickerUpdateDTO){
         Sticker editedSticker = stickerService.updateSticker(stickerUpdateDTO);
         if (editedSticker == null)
             return ResponseEntity.badRequest().body("해당 id의 스티커가 존재하지 않습니다.");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(editedSticker);
     }
 
     // 스티커 삭제

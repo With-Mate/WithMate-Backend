@@ -5,10 +5,9 @@ import com.gdscewha.withmate.common.response.exception.StickerException;
 import com.gdscewha.withmate.common.validation.ValidationService;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
-import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
-import com.gdscewha.withmate.domain.sticker.dto.StickerDetailResDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewResDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateReqDTO;
+import com.gdscewha.withmate.domain.relation.dto.RelationHomeDto;
+import com.gdscewha.withmate.domain.relation.service.RelationMateService;
+import com.gdscewha.withmate.domain.sticker.dto.*;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
 import com.gdscewha.withmate.domain.week.entity.Week;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,9 +25,28 @@ public class StickerService {
     private final StickerRepository stickerRepository;
     private final MemberService memberService;
     private final WeekService weekService;
+    private final RelationMateService relationMateService;
 
-    // 새로운 스티커 CREATE 메소드(제목, 메모)
-    public Sticker createSticker(StickerCreateDTO stickerCreateDTO) {
+    // 목표 화면에서 나-메이트 정보 가져오기
+    public StickerRelationDto getStickerRelationInfo() {
+        RelationHomeDto relationHomeDto = relationMateService.getHomeInfo();
+        return StickerRelationDto.builder()
+                .myName(relationHomeDto.getMyName())
+                .myGoal(relationHomeDto.getMyGoal())
+                .mateName(relationHomeDto.getMateName())
+                .mateGoal(relationHomeDto.getMateGoal())
+                .build();
+    }
+
+    // 이번 주 스티커 미리보기로 조회 메소드
+    public WeekStickersDto getStickersForAWeek(Member member) {
+        Week week = weekService.getCurrentWeek(member);
+        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
+        return new WeekStickersDto(week, stickerList);
+    }
+
+    // 새로운 스티커 CREATE 메소드(제목, 스티커 색깔, 모양, 위치 등)
+    public StickerPreviewResDto createSticker(StickerCreateDTO stickerCreateDTO) {
         Member member = memberService.getCurrentMember();
         Week currentWeek = weekService.updateStickerCountOfCurrentWeek(1L);
         Sticker sticker = Sticker.builder()
@@ -43,13 +60,14 @@ public class StickerService {
                 .week(currentWeek)
                 .member(member)
                 .build();
-        return stickerRepository.save(sticker);
-    }
-
-    // entity를 StickerCreateDTO로 변환
-    public StickerCreateDTO convertToCreateDTO(Sticker sticker) {
-        return StickerCreateDTO.builder()
+        stickerRepository.save(sticker);
+        return StickerPreviewResDto.builder()
+                .id(sticker.getId())
                 .title(sticker.getTitle())
+                .stickerColor(sticker.getStickerColor())
+                .stickerShape(sticker.getStickerShape())
+                .stickerTop(sticker.getStickerTop())
+                .stickerLeft(sticker.getStickerLeft())
                 .build();
     }
 
@@ -71,15 +89,6 @@ public class StickerService {
             sticker.setImpressionTime(LocalDate.now());
         }
         return stickerRepository.save(sticker);
-    }
-
-    // entity를 StickerUpdateReqTO로 변환
-    public StickerUpdateReqDTO convertToUpdateDTO(Sticker sticker) {
-        return StickerUpdateReqDTO.builder()
-                .title(sticker.getTitle())
-                .content(sticker.getContent())
-                .impression(sticker.getImpression())
-                .build();
     }
 
     // 스티커 DELETE 메소드
@@ -108,26 +117,4 @@ public class StickerService {
         stickerMyResDto.setIsMine(sticker.getMember() == currentMember);
         return stickerMyResDto;
     }
-
-    // 이번 주 스티커 미리보기로 조회 메소드
-    public List<StickerPreviewResDto> getStickersForAWeek(Member member) {
-        Week week = weekService.getCurrentWeek(member);
-        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
-        List<StickerPreviewResDto> stickerPreviewDtos = new ArrayList<>();
-        for (Sticker sticker : stickerList) {
-            String impression = sticker.getImpression();
-            StickerPreviewResDto previewDto = StickerPreviewResDto.builder()
-                    .id(sticker.getId())
-                    .title(sticker.getTitle())
-                    .stickerColor(sticker.getStickerColor())
-                    .stickerShape(sticker.getStickerShape())
-                    .stickerTop(sticker.getStickerTop())
-                    .stickerLeft(sticker.getStickerLeft())
-                    .build();
-            stickerPreviewDtos.add(previewDto);
-        }
-        return stickerPreviewDtos;
-    }
-
-    // TODO: 컨트롤러 작성하며 프로필에서 여정, 주, 스티커 조회 방식 고민 필요
 }

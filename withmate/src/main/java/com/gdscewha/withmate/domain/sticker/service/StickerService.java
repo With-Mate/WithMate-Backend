@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -42,7 +43,7 @@ public class StickerService {
     public WeekStickersDto getStickersForAWeek(Member member) {
         Week week = weekService.getCurrentWeek(member);
         List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
-        return new WeekStickersDto(week, stickerList);
+        return new WeekStickersDto(week, member, stickerList);
     }
 
     // 새로운 스티커 CREATE 메소드(제목, 스티커 색깔, 모양, 위치 등)
@@ -52,6 +53,8 @@ public class StickerService {
         Sticker sticker = Sticker.builder()
                 .stickerNum(currentWeek.getStickerCount() + 1) // 처음에 1L
                 .title(stickerCreateDTO.getTitle())
+                .content("")
+                .impression("")
                 .creationTime(LocalDate.now())
                 .stickerColor(stickerCreateDTO.getStickerColor())
                 .stickerShape(stickerCreateDTO.getStickerShape())
@@ -110,11 +113,24 @@ public class StickerService {
                 .id(stickerId)
                 .title(sticker.getTitle())
                 .content(sticker.getContent())
+                .creationTime(sticker.getCreationTime().toString())
                 .impression(sticker.getImpression())
-                .impressionTime(sticker.getImpressionTime().toString())
                 .isMine(null)
+                .stickerColor(sticker.getStickerColor())
+                .stickerShape(sticker.getStickerShape())
                 .build();
+        LocalDate impressionTime = sticker.getImpressionTime();
+        if (impressionTime != null) {
+            stickerMyResDto.setImpressionTime(impressionTime.toString());
+        }
         stickerMyResDto.setIsMine(sticker.getMember() == currentMember);
         return stickerMyResDto;
     }
+
+    /*// LocalDateTime을 주어진 패턴에 맞게 문자열로 변환하는 메소드
+    public static String formatLocalDate(LocalDate date) {
+        // DateTimeFormatter를 사용하여 LocalDateTime을 문자열로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
+    }*/
 }

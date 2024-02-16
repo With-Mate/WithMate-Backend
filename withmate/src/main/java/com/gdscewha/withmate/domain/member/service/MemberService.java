@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -84,6 +85,8 @@ public class MemberService {
         // 로그인한 userName으로 멤버 찾기
         Member member = memberRepository.findByUserName(userName)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND));
+        if (member.getLoginDate() != LocalDate.now()) // 로그인 시간 업데이트
+            memberRepository.save(member.updateLoginDate());
         return member;
     }
 
@@ -95,20 +98,6 @@ public class MemberService {
         if (mateMR == null)
             return null; // 반환
         return mateMR.getMember();
-    }
-
-    // 테스트 멤버 저장(임시) - 테스트용
-    public Member saveTestMember() {
-        Member member = Member.builder()
-                .userName("TestUserName")
-                .nickname("TestNickname")
-                .passwd("TestPasswd")
-                .email("testuser@example.com")
-                .birth("2000-01-01")
-                .country("Korea")
-                .build()
-                ;
-        return memberRepository.save(member);
     }
     
     // 사용자 탈퇴: Current Member 삭제

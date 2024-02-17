@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -23,12 +24,12 @@ public class MatchedResultDto {
     private Category category2;
 
     // List<Matching>을 받는 생성자
-    public MatchedResultDto(List<Matching> matching) {
-        this.nickname1 = matching.get(0).getMember().getNickname();
-        this.goal1 = matching.get(0).getGoal();
-        this.category1 = matching.get(0).getCategory();
-        this.nickname2 = matching.get(1).getMember().getNickname();
-        this.goal2 = matching.get(1).getGoal();
-        this.category2 = matching.get(1).getCategory();
+    public MatchedResultDto(Pair<Matching, Matching> matchedPair) {
+        this.nickname1 = matchedPair.getFirst().getMember().getNickname();
+        this.goal1 = matchedPair.getFirst().getGoal();
+        this.category1 = matchedPair.getFirst().getCategory();
+        this.nickname2 = matchedPair.getSecond().getMember().getNickname();
+        this.goal2 = matchedPair.getSecond().getGoal();
+        this.category2 = matchedPair.getSecond().getCategory();
     }
 }

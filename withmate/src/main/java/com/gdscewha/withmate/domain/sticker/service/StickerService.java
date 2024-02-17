@@ -1,32 +1,42 @@
 package com.gdscewha.withmate.domain.sticker.service;
 
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.common.response.exception.StickerException;
 import com.gdscewha.withmate.common.validation.ValidationService;
+import com.gdscewha.withmate.domain.journey.dto.JourneyStickersDto;
+import com.gdscewha.withmate.domain.journey.entity.Journey;
+import com.gdscewha.withmate.domain.journey.service.JourneyService;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
+import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
+import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
 import com.gdscewha.withmate.domain.relation.dto.RelationHomeDto;
+import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import com.gdscewha.withmate.domain.sticker.dto.*;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
+import com.gdscewha.withmate.domain.week.dto.WeekStickersDto;
 import com.gdscewha.withmate.domain.week.entity.Week;
 import com.gdscewha.withmate.domain.week.service.WeekService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class StickerService {
     private final ValidationService validationService;
-    private final StickerRepository stickerRepository;
     private final MemberService memberService;
-    private final WeekService weekService;
     private final RelationMateService relationMateService;
+    private final JourneyService journeyService;
+    private final WeekService weekService;
+    private final MemberRelationRepository mRRepository;
+    private final StickerRepository stickerRepository;
 
     // 목표 화면에서 나-메이트 정보 가져오기
     public StickerRelationDto getStickerRelationInfo() {
@@ -40,10 +50,39 @@ public class StickerService {
     }
 
     // 이번 주 스티커 미리보기로 조회 메소드
-    public WeekStickersDto getStickersForAWeek(Member member) {
+    public WeekStickersDto getStickersForCurrentWeek(Member member) {
         Week week = weekService.getCurrentWeek(member);
         List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
         return new WeekStickersDto(week, member, stickerList);
+    }
+
+    // 한 주 스티커 미리보기로 조회 메소드
+    public WeekStickersDto getStickersForAWeek(Member member, Week week) {
+        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
+        return new WeekStickersDto(week, member, stickerList);
+    }
+
+    // 프로필 화면 - index번째 여정의 스티커들을 가져오기
+    public JourneyStickersDto getStickersForAJourney(Member member, Long index) {
+        List<MemberRelation> mRList = mRRepository.findAllByMember(member);
+        int relationIndex; // 볼 relation의 index
+        if (mRList == null || mRList.isEmpty())
+            return null;
+        if (index == null) // 가장 최신을 보는 경우
+            relationIndex = mRList.size();
+        else if (index > mRList.size())
+            throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
+        else
+            relationIndex = index.intValue();
+        Relation relation = mRList.get(relationIndex - 1).getRelation();
+        Journey journey = journeyService.getJourneyByRelation(relation);
+        List<Week> weekList = weekService.getAllWeeksByJourney(journey);
+        List<WeekStickersDto> weekStickersDtos = new ArrayList<>();
+        for (Week w : weekList) {
+            weekStickersDtos.add(getStickersForAWeek(member, w));
+        }
+        StickerRelationDto relationDto = getStickerRelationInfo();
+        return new JourneyStickersDto(relationIndex, weekList.size(), relationDto, weekStickersDtos);
     }
 
     // 새로운 스티커 CREATE 메소드(제목, 스티커 색깔, 모양, 위치 등)

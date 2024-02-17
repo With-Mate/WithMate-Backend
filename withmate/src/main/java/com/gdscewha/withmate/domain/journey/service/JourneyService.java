@@ -11,7 +11,6 @@ import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,9 +24,7 @@ public class JourneyService {
     public Journey createJourney(Relation relation) {
         if (relation == null)
             throw new JourneyException(ErrorCode.RELATION_NOT_FOUND);
-        List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
         Journey journey = Journey.builder()
-                .journeyNum(Long.valueOf(existingJourneyList.size())) // 처음에 1L
                 .weekCount(0L) // 처음에 0L
                 .relation(relation)
                 .build();
@@ -45,9 +42,9 @@ public class JourneyService {
         return journeyRepository.save(journey);
     }
 
-    // 단일 Journey 조회: Relation과 index로
-    public Journey getJourneyByRelationAndIndex(Relation relation, Long index) {
-        Optional<Journey> journeyOptional = journeyRepository.findByRelationAndJourneyNum(relation, index);
+    // 단일 Journey 조회: Relation으로
+    public Journey getJourneyByRelation(Relation relation) {
+        Optional<Journey> journeyOptional = journeyRepository.findByRelation(relation);
         if (journeyOptional.isPresent())
             return journeyOptional.get();
         throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND);
@@ -58,23 +55,9 @@ public class JourneyService {
         Relation relation = relationMateService.getCurrentRelation(member);
         if (relation == null)
             throw new JourneyException(ErrorCode.RELATION_NOT_FOUND);
-        List<Journey> existingJourneyList = journeyRepository.findAllByRelation(relation);
-        if (existingJourneyList == null || existingJourneyList.isEmpty())
+        Optional<Journey> currentJourney = journeyRepository.findByRelation(relation);
+        if (currentJourney == null || currentJourney.isEmpty())
             return null;
-        Integer index = existingJourneyList.size() - 1;
-        return existingJourneyList.get(index);
-    }
-
-    public Journey getNthJourneyInProfile(Member member, Long journeyNum) {
-        Relation relation = relationMateService.getCurrentRelation(member);
-        if (journeyNum == null) {
-            Journey journey = getCurrentJourney(member);
-            return journey;
-        }
-        else if (journeyNum <= 0) {
-            throw new JourneyException(ErrorCode.JOURNEY_NOT_FOUND); // journeyNum은 1에서 시작하므로
-        }
-        Journey journey = getJourneyByRelationAndIndex(relation, journeyNum);
-        return journey;
+        return currentJourney.get();
     }
 }

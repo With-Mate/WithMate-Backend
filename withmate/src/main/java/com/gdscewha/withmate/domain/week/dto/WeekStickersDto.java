@@ -1,6 +1,7 @@
-package com.gdscewha.withmate.domain.sticker.dto;
+package com.gdscewha.withmate.domain.week.dto;
 
 import com.gdscewha.withmate.domain.member.entity.Member;
+import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewResDto;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.week.entity.Week;
 import lombok.AllArgsConstructor;

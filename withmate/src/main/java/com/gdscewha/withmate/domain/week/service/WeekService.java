@@ -58,7 +58,7 @@ public class WeekService {
     public List<Week> getAllWeeksByJourney(Journey journey){
         List<Week> weekList = weekRepository.findAllByJourney(journey);
         if (weekList == null || weekList.isEmpty())
-            return null;
+            throw new WeekException(ErrorCode.WEEK_NOT_FOUND);
         return weekList;
     }
 

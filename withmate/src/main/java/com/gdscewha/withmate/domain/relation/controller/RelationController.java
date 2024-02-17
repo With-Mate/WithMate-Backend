@@ -1,5 +1,7 @@
 package com.gdscewha.withmate.domain.relation.controller;
 
+import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.domain.relation.dto.RelationHomeDto;
 import com.gdscewha.withmate.domain.relation.dto.RelationManageDto;
 import com.gdscewha.withmate.domain.relation.dto.RelationReportDto;
@@ -31,18 +33,18 @@ public class RelationController {
     public ResponseEntity<?> getMateManageInfo() {
         RelationManageDto relationManageDto = relationMateService.getRelationManageInfo();
         if (relationManageDto == null)
-            return ResponseEntity.ok().header("Location", "/api/match").build();
+            return ResponseEntity.badRequest().header("Location", "/api/match").build();
         return ResponseEntity.ok().body(relationManageDto);
     }
 
     // 메이트 끊기
     @PatchMapping("/mate/unrelate")
-    public ResponseEntity<?> unrelateMate(@RequestBody RelationReportDto relationReportDto){
-        if (relationReportDto.getMyName() != null && relationReportDto.getMateName() != null) {
+    public ResponseEntity<?> unrelateMate(){ //@RequestBody RelationReportDto relationReportDto
             Relation relation = relationMateService.endCurrentRelation();
-            return ResponseEntity.ok().body("메이트와의 관계를 끊었습니다. " + relation);
-        }
-        return ResponseEntity.badRequest().body("신고자 또는 상대방의 userName이 잘못되었습니다.");
+            if (relation == null)
+                return ResponseEntity.badRequest().body("관계를 끊을 메이트가 없습니다.");
+            return ResponseEntity.ok().body("메이트와의 관계를 끊었습니다.\n"
+                    + relation.getStartDate() + "부터 " + relation.getEndDate() + "까지 함께했습니다.");
     }
 
 }

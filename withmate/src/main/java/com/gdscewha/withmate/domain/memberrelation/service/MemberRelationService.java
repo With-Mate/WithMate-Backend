@@ -5,6 +5,7 @@ import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
+import com.gdscewha.withmate.domain.memberrelation.dto.MRUpdateDto;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
@@ -101,20 +102,30 @@ public class MemberRelationService {
     }
 
     // Member의 Goal 업데이트
-    public MemberRelation updateMRGoal(Member member, String newGoal) {
+    public MRUpdateDto updateMRGoal(Member member, String newGoal) {
         MemberRelation memberRelation = findLastMROfMember(member);
         if (memberRelation == null)
             throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
         memberRelation.setGoal(newGoal);
-        return mRRepository.save(memberRelation);
+        mRRepository.save(memberRelation);
+        return MRUpdateDto.builder()
+                .nickname(memberRelation.getMember().getNickname())
+                .goal(newGoal)
+                .message(memberRelation.getMessage())
+                .build();
     }
 
     // Member의 Message 업데이트
-    public MemberRelation updateMRMessage(Member member, String newMessage) {
+    public MRUpdateDto updateMRMessage(Member member, String newMessage) {
         MemberRelation memberRelation = findLastMROfMember(member);
         if (memberRelation == null)
             throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
         memberRelation.setMessage(newMessage);
-        return mRRepository.save(memberRelation);
+        mRRepository.save(memberRelation);
+        return MRUpdateDto.builder()
+                .nickname(memberRelation.getMember().getNickname())
+                .goal(memberRelation.getGoal())
+                .message(newMessage)
+                .build();
     }
 }

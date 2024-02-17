@@ -56,7 +56,7 @@ public class RelationMateService {
         Member member = memberService.getCurrentMember();
         Relation relation = getCurrentRelation(member);
         if (relation == null)
-            throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
+            return null;
         mRService.endIsRelationedOfMembers(relation);
         relation.setEndDate(LocalDate.now());
         relation.setIsProceed(false);

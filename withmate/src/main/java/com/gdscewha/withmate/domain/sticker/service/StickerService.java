@@ -97,10 +97,10 @@ public class StickerService {
     public RelationProfileDto getStickerRelationInfoByRelation(Relation relation) {
         List<MemberRelation> mRList = mRRepository.findAllByRelation(relation);
         return RelationProfileDto.builder()
-                .member1Name(mRList.get(0).getMember().getNickname())
-                .member1Goal(mRList.get(0).getGoal())
-                .member2Name(mRList.get(1).getMember().getNickname())
-                .member2Goal(mRList.get(1).getGoal())
+                .nickname1(mRList.get(0).getMember().getNickname())
+                .goal1(mRList.get(0).getGoal())
+                .nickname2(mRList.get(1).getMember().getNickname())
+                .goal2(mRList.get(1).getGoal())
                 .build();
     }
 

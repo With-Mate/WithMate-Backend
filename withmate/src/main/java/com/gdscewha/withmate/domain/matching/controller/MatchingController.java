@@ -44,7 +44,7 @@ public class MatchingController {
     public ResponseEntity<?> getPersonMatching(@RequestParam Category category) {
         MatchingResDto matchingResDto = matchingService.getMatchingByCategory(category);
         if (matchingResDto == null)
-            return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다"); // 사람이 없음; 매칭 대기 띄워야 함
+            return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다."); // 사람이 없음; 매칭 대기 띄워야 함
         return ResponseEntity.ok().body(matchingResDto);
     }
 
@@ -53,7 +53,7 @@ public class MatchingController {
     public ResponseEntity<?> getPeopleMatching() {
         List<MatchingResDto> matchingList = matchingService.getCurrentMatchingList();
         if (matchingList.isEmpty())
-            return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다"); // 사람이 없음; 매칭 대기 띄워야 함
+            return ResponseEntity.ok().body("매칭 가능한 상대방이 없습니다."); // 사람이 없음; 매칭 대기 띄워야 함
         return ResponseEntity.ok().body(matchingList);
     }
 

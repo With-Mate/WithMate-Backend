@@ -23,23 +23,32 @@ public class MemberRelationService {
     // Member의 모든 MR을 반환한다
     public List<MemberRelation> findAllMROfMember(Member member) {
         List<MemberRelation> mRList = mRRepository.findAllByMember(member);
-        if (mRList != null && !mRList.isEmpty()) {
-            return mRList;
-        }
-        return null; // 찾지 못했음
+        if (mRList == null || mRList.isEmpty())
+            return null;
+        return mRList; // 찾지 못했음
     }
+
+    // Member의 N번째 MR을 반환한다
+    /*public MemberRelation findNthMROfMember(Member member, Long index) {
+        List<MemberRelation> mRList = mRRepository.findAllByMember(member);
+        if (mRList == null || mRList.isEmpty())
+            return null;
+        if (index == null)
+            return mRList.get(mRList.size() - 1);
+        if (index > mRList.size())
+            return null;
+        return mRList.get(index.intValue());
+    }*/
 
     // Member에게 가장 최신인 MR 하나를 반환한다
     public MemberRelation findLastMROfMember(Member member) {
-        List<MemberRelation> mRList = findAllMROfMember(member);
-        if (mRList == null) {
+        List<MemberRelation> mRList = mRRepository.findAllByMember(member);
+        if (mRList == null || mRList.isEmpty())
             return null;
-        }
         MemberRelation lastMR = mRList.get(mRList.size() - 1);
-        if (lastMR.getRelation().getIsProceed() == true) { // 지속중이라면
-            return lastMR;
-        }
-        return null; // 찾지 못했음
+        if (!lastMR.getRelation().getIsProceed())
+            return null;
+        return lastMR;
     }
 
     // MR 두 개 만들고 저장, 두 Member의 isRelationed는 MatchingService에서 바꿔줌
@@ -101,6 +110,7 @@ public class MemberRelationService {
         memberRelation.setGoal(newGoal);
         return mRRepository.save(memberRelation);
     }
+
     // Member의 Message 업데이트
     public MemberRelation updateMRMessage(Member member, String newMessage) {
         MemberRelation memberRelation = findLastMROfMember(member);

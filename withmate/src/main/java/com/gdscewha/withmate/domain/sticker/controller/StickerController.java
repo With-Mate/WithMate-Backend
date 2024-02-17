@@ -1,10 +1,11 @@
 package com.gdscewha.withmate.domain.sticker.controller;
 
+import com.gdscewha.withmate.domain.journey.dto.JourneyStickersDto;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.sticker.dto.*;
-import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.service.StickerService;
+import com.gdscewha.withmate.domain.week.dto.WeekStickersDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,13 @@ public class StickerController {
     private final MemberService memberService;
     private final StickerService stickerService;
 
-    // 내 이름, 목표 와 메이트 이름과 목표
+    // 내 이름, 목표와 메이트 이름과 목표
     @GetMapping("/sticker/relation")
     public ResponseEntity<?> getMeAndMateInfo() {
         Member member = memberService.getCurrentMember();
         if (!member.getIsRelationed())
             return ResponseEntity.badRequest().body("현재 메이트를 맺은 상태가 아닙니다.");
-        StickerRelationDto stickerRelationDto = stickerService.getStickerRelationInfo();
+        StickerRelationDto stickerRelationDto = stickerService.getStickerRelationInfo(member);
         if (stickerRelationDto == null)
             return ResponseEntity.ok().header("Location", "/api/match").build();
         return ResponseEntity.ok().body(stickerRelationDto);
@@ -35,9 +36,30 @@ public class StickerController {
         Member member = memberService.getCurrentMember();
         if (!member.getIsRelationed())
             return ResponseEntity.badRequest().body("현재 메이트를 맺은 상태가 아닙니다.");
-        WeekStickersDto weekStickersDto = stickerService.getStickersForAWeek(member);
+        WeekStickersDto weekStickersDto = stickerService.getStickersForCurrentWeek(member);
         return ResponseEntity.ok().body(weekStickersDto);
     }
+
+    // 내 n번째 여정 조회
+    @GetMapping("/self/journey")
+    public ResponseEntity<?> getMyNthJourney(@RequestParam(required = false) Long index) {
+        Member member = memberService.getCurrentMember();
+        JourneyStickersDto journeyStickersDto = stickerService.getStickersForAJourney(member, index);
+        if (journeyStickersDto == null)
+            return ResponseEntity.badRequest().body("여정이 없습니다.");
+        return ResponseEntity.ok().body(journeyStickersDto);
+    }
+
+    // 메이트의 n번째 여정 조회
+    @GetMapping("/mate/journey")
+    public ResponseEntity<?> getMateNthJourney(@RequestParam(required = false) Long index) {
+        Member mate = memberService.getCurrentMate();
+        JourneyStickersDto journeyStickersDto = stickerService.getStickersForAJourney(mate, index);
+        if (journeyStickersDto == null)
+            return ResponseEntity.badRequest().body("여정이 없습니다.");
+        return ResponseEntity.ok().body(journeyStickersDto);
+    }
+
 
     // 모달 스티커 작성
     @PostMapping("/sticker/create")

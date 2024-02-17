@@ -18,9 +18,6 @@ public class Journey {
     @Column(name = "journeyId")
     private Long id;
 
-    @Column(nullable = false, name = "journeyNum")
-    private Long journeyNum;
-
     @Column(nullable = false, name = "weekCount")
     private Long weekCount;
 

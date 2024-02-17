@@ -1,7 +1,6 @@
 package com.gdscewha.withmate.domain.journey.dto;
 
-import com.gdscewha.withmate.domain.member.entity.Member;
-import com.gdscewha.withmate.domain.sticker.dto.StickerRelationDto;
+import com.gdscewha.withmate.domain.relation.dto.RelationProfileDto;
 import com.gdscewha.withmate.domain.week.dto.WeekStickersDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +17,6 @@ import java.util.List;
 public class JourneyStickersDto {
     private int journeyIndex;
     private int weekCount;
-    private StickerRelationDto relationInfo;
+    private RelationProfileDto relationInfo;
     private List<WeekStickersDto> weekBoards;
 }

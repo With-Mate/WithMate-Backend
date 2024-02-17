@@ -18,13 +18,13 @@ public class StickerController {
     private final MemberService memberService;
     private final StickerService stickerService;
 
-    // 내 이름, 목표 와 메이트 이름과 목표
+    // 내 이름, 목표와 메이트 이름과 목표
     @GetMapping("/sticker/relation")
     public ResponseEntity<?> getMeAndMateInfo() {
         Member member = memberService.getCurrentMember();
         if (!member.getIsRelationed())
             return ResponseEntity.badRequest().body("현재 메이트를 맺은 상태가 아닙니다.");
-        StickerRelationDto stickerRelationDto = stickerService.getStickerRelationInfo();
+        StickerRelationDto stickerRelationDto = stickerService.getStickerRelationInfo(member);
         if (stickerRelationDto == null)
             return ResponseEntity.ok().header("Location", "/api/match").build();
         return ResponseEntity.ok().body(stickerRelationDto);

@@ -11,9 +11,9 @@ import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
-import com.gdscewha.withmate.domain.relation.dto.RelationHomeDto;
+import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService;
+import com.gdscewha.withmate.domain.relation.dto.RelationProfileDto;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
-import com.gdscewha.withmate.domain.relation.service.RelationMateService;
 import com.gdscewha.withmate.domain.sticker.dto.*;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
@@ -32,20 +32,28 @@ import java.util.List;
 public class StickerService {
     private final ValidationService validationService;
     private final MemberService memberService;
-    private final RelationMateService relationMateService;
+    private final MemberRelationService mRService;
     private final JourneyService journeyService;
     private final WeekService weekService;
     private final MemberRelationRepository mRRepository;
     private final StickerRepository stickerRepository;
 
     // 목표 화면에서 나-메이트 정보 가져오기
-    public StickerRelationDto getStickerRelationInfo() {
-        RelationHomeDto relationHomeDto = relationMateService.getHomeInfo();
+    public StickerRelationDto getStickerRelationInfo(Member member) {
+        MemberRelation myMR = mRService.findLastMROfMember(member);
+        if (myMR == null)
+            return null; // 반환
+        Relation relation = myMR.getRelation();
+        if (relation == null)
+            throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
+        MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, relation);
+        if (mateMR == null)
+            return null; // 반환
         return StickerRelationDto.builder()
-                .myName(relationHomeDto.getMyName())
-                .myGoal(relationHomeDto.getMyGoal())
-                .mateName(relationHomeDto.getMateName())
-                .mateGoal(relationHomeDto.getMateGoal())
+                .myName(myMR.getMember().getNickname())
+                .myGoal(myMR.getGoal())
+                .mateName(mateMR.getMember().getNickname())
+                .mateGoal(mateMR.getGoal())
                 .build();
     }
 
@@ -81,8 +89,19 @@ public class StickerService {
         for (Week w : weekList) {
             weekStickersDtos.add(getStickersForAWeek(member, w));
         }
-        StickerRelationDto relationDto = getStickerRelationInfo();
+        RelationProfileDto relationDto = getStickerRelationInfoByRelation(relation);
         return new JourneyStickersDto(relationIndex, weekList.size(), relationDto, weekStickersDtos);
+    }
+
+    // 프로필 화면에서 관계 정보 가져오기
+    public RelationProfileDto getStickerRelationInfoByRelation(Relation relation) {
+        List<MemberRelation> mRList = mRRepository.findAllByRelation(relation);
+        return RelationProfileDto.builder()
+                .member1Name(mRList.get(0).getMember().getNickname())
+                .member1Goal(mRList.get(0).getGoal())
+                .member2Name(mRList.get(1).getMember().getNickname())
+                .member2Goal(mRList.get(1).getGoal())
+                .build();
     }
 
     // 새로운 스티커 CREATE 메소드(제목, 스티커 색깔, 모양, 위치 등)

@@ -9,6 +9,7 @@ import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,22 +53,19 @@ public class MemberRelationService {
     }
 
     // MR 두 개 만들고 저장, 두 Member의 isRelationed는 MatchingService에서 바꿔줌
-    public void createMemberRelationPair(List<Matching> matchingList, List<Member> memberList, Relation relation){
-        Matching matching1 = matchingList.get(0);
-        Matching matching2 = matchingList.get(1);
-        
+    public void createMemberRelationPair(Pair<Matching, Matching> matchingPair, Pair<Member, Member> memberPair, Relation relation){
         MemberRelation myMR = MemberRelation.builder()
-                .goal(matching1.getGoal())
-                .category(matching1.getCategory())
+                .goal(matchingPair.getFirst().getGoal())
+                .category(matchingPair.getFirst().getCategory())
                 // message is nullable
-                .member(memberList.get(0))
+                .member(memberPair.getFirst())
                 .relation(relation)
                 .build();
         MemberRelation mateMR = MemberRelation.builder()
-                .goal(matching2.getGoal())
-                .category(matching2.getCategory())
+                .goal(matchingPair.getSecond().getGoal())
+                .category(matchingPair.getSecond().getCategory())
                 // message is nullable
-                .member(memberList.get(1))
+                .member(memberPair.getSecond())
                 .relation(relation)
                 .build();
         mRRepository.save(myMR);

@@ -39,7 +39,7 @@ public class WeekService {
     public Week updateStickerCountOfCurrentWeek(Long diff){
         Member member = memberService.getCurrentMember();
         Week week = getCurrentWeek(member);
-        if(week == null)
+        if (week == null)
             throw new WeekException(ErrorCode.WEEK_NOT_FOUND);
         Long newStickerCount = week.getStickerCount() + diff;
         if (newStickerCount < 0)

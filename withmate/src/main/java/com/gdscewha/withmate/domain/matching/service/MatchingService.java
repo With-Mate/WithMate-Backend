@@ -148,7 +148,7 @@ public class MatchingService {
             log.info("멤버: isRelationed");
             return null;
         }
-        if (me.getMatching().equals(null)){
+        if (me.getMatching() != null){
             log.info("멤버: matched");
             return null;
         }

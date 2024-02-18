@@ -41,7 +41,7 @@ public class StickerController {
             return ResponseEntity.ok().header("Location", "/api/match").build();
         return ResponseEntity.ok().body(relationHomeDto);
     }
-    
+
     // 모달 스티커 작성
     @PostMapping("/sticker/create")
     public ResponseEntity<?> createSticker(@RequestBody StickerCreateDTO stickerCreateDTO){

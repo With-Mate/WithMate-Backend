@@ -26,10 +26,9 @@ public class MatchingController {
     @GetMapping("/match")
     public ResponseEntity<?> getMatchingInfo() {
         Member member = memberService.getCurrentMember();
-        // match 불가:
-        // 메이트 관계가 있는 경우 리다이렉트
+        // match 불가: 메이트 관계가 있는 경우
         if (member.getIsRelationed())
-            return ResponseEntity.ok().header("Location", "/api/home").build();
+            return ResponseEntity.badRequest().header("Location", "/api/home").body("메이트를 맺은 상태이므로 매칭할 수 없습니다.");
         // match 가능:
         MatchingInputDto resDto = matchingService.getCurrentMatchingDto();
         // 아직 매칭 X

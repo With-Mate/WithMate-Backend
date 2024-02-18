@@ -3,7 +3,6 @@ package com.gdscewha.withmate.domain.memberrelation.controller;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.dto.MRUpdateDto;
-import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

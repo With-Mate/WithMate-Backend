@@ -145,11 +145,11 @@ public class MatchingService {
     public Pair<Matching, Matching> relateMatesByCategory(Category category, MatchingInputDto reqDto) {
         Member me = memberService.getCurrentMember();
         if (me.getIsRelationed()) {
-            log.info("멤버: isRelationed");
+            log.info("멤버: 메이트 관계가 있는 사람이 있음");
             return null;
         }
         if (me.getMatching() != null){
-            log.info("멤버: matched");
+            log.info("멤버: 매칭 대기 중");
             return null;
         }
         // 같은 카테고리의 Matching 리스트
@@ -182,9 +182,8 @@ public class MatchingService {
             // Mate의 매칭 삭제
             matchingRepository.delete(mateMatching);
             return matchingPair;
-        } else {
-            throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
         }
+        return null;
     }
 
 }

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -39,11 +40,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
             return authentication;
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Member 매핑 불가: 로그인 불가
             e.printStackTrace();
         }
-
         return null;
     }
 

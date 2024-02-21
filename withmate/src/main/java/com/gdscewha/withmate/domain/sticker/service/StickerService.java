@@ -1,16 +1,23 @@
 package com.gdscewha.withmate.domain.sticker.service;
 
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.common.response.exception.StickerException;
 import com.gdscewha.withmate.common.validation.ValidationService;
+import com.gdscewha.withmate.domain.journey.dto.JourneyStickersDto;
+import com.gdscewha.withmate.domain.journey.entity.Journey;
+import com.gdscewha.withmate.domain.journey.service.JourneyService;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
-import com.gdscewha.withmate.domain.sticker.dto.StickerCreateDTO;
-import com.gdscewha.withmate.domain.sticker.dto.StickerDetailResDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerPreviewResDto;
-import com.gdscewha.withmate.domain.sticker.dto.StickerUpdateReqDTO;
+import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
+import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
+import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService;
+import com.gdscewha.withmate.domain.relation.dto.RelationProfileDto;
+import com.gdscewha.withmate.domain.relation.entity.Relation;
+import com.gdscewha.withmate.domain.sticker.dto.*;
 import com.gdscewha.withmate.domain.sticker.entity.Sticker;
 import com.gdscewha.withmate.domain.sticker.repository.StickerRepository;
+import com.gdscewha.withmate.domain.week.dto.WeekStickersDto;
 import com.gdscewha.withmate.domain.week.entity.Week;
 import com.gdscewha.withmate.domain.week.service.WeekService;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +31,88 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StickerService {
     private final ValidationService validationService;
-    private final StickerRepository stickerRepository;
     private final MemberService memberService;
+    private final MemberRelationService mRService;
+    private final JourneyService journeyService;
     private final WeekService weekService;
+    private final MemberRelationRepository mRRepository;
+    private final StickerRepository stickerRepository;
 
-    // 새로운 스티커 CREATE 메소드(제목, 메모)
-    public Sticker createSticker(StickerCreateDTO stickerCreateDTO) {
+    // 목표 화면에서 나-메이트 정보 가져오기
+    public StickerRelationDto getStickerRelationInfo(Member member) {
+        MemberRelation myMR = mRService.findLastMROfMember(member);
+        if (myMR == null)
+            return null; // 반환
+        Relation relation = myMR.getRelation();
+        if (relation == null)
+            throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
+        MemberRelation mateMR = mRService.findMROfMateByRelation(myMR, relation);
+        if (mateMR == null)
+            return null; // 반환
+        return StickerRelationDto.builder()
+                .myName(myMR.getMember().getNickname())
+                .myGoal(myMR.getGoal())
+                .mateName(mateMR.getMember().getNickname())
+                .mateGoal(mateMR.getGoal())
+                .build();
+    }
+
+    // 이번 주 스티커 미리보기로 조회 메소드
+    public WeekStickersDto getStickersForCurrentWeek(Member member) {
+        Week week = weekService.getCurrentWeek(member);
+        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
+        return new WeekStickersDto(week, member, stickerList);
+    }
+
+    // 한 주 스티커 미리보기로 조회 메소드
+    public WeekStickersDto getStickersForAWeek(Member member, Week week) {
+        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
+        return new WeekStickersDto(week, member, stickerList);
+    }
+
+    // 프로필 화면 - index번째 여정의 스티커들을 가져오기
+    public JourneyStickersDto getStickersForAJourney(Member member, Long index) {
+        List<MemberRelation> mRList = mRRepository.findAllByMember(member);
+        int relationIndex; // 볼 relation의 index
+        if (mRList == null || mRList.isEmpty())
+            return null;
+        if (index == null) // 가장 최신을 보는 경우
+            relationIndex = mRList.size();
+        else if (index > mRList.size())
+            throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
+        else
+            relationIndex = index.intValue();
+        Relation relation = mRList.get(relationIndex - 1).getRelation();
+        Journey journey = journeyService.getJourneyByRelation(relation);
+        List<Week> weekList = weekService.getAllWeeksByJourney(journey);
+        List<WeekStickersDto> weekStickersDtos = new ArrayList<>();
+        for (Week w : weekList) {
+            weekStickersDtos.add(getStickersForAWeek(member, w));
+        }
+        RelationProfileDto relationDto = getStickerRelationInfoByRelation(relation);
+        return new JourneyStickersDto(relationIndex, weekList.size(), relationDto, weekStickersDtos);
+    }
+
+    // 프로필 화면에서 관계 정보 가져오기
+    public RelationProfileDto getStickerRelationInfoByRelation(Relation relation) {
+        List<MemberRelation> mRList = mRRepository.findAllByRelation(relation);
+        return RelationProfileDto.builder()
+                .nickname1(mRList.get(0).getMember().getNickname())
+                .goal1(mRList.get(0).getGoal())
+                .nickname2(mRList.get(1).getMember().getNickname())
+                .goal2(mRList.get(1).getGoal())
+                .build();
+    }
+
+    // 새로운 스티커 CREATE 메소드(제목, 스티커 색깔, 모양, 위치 등)
+    public StickerPreviewResDto createSticker(StickerCreateDTO stickerCreateDTO) {
         Member member = memberService.getCurrentMember();
         Week currentWeek = weekService.updateStickerCountOfCurrentWeek(1L);
         Sticker sticker = Sticker.builder()
-                .stickerNum(currentWeek.getStickerCount() + 1)
+                .stickerNum(currentWeek.getStickerCount()) // 처음에 1L
                 .title(stickerCreateDTO.getTitle())
+                .content("")
+                .impression("")
                 .creationTime(LocalDate.now())
                 .stickerColor(stickerCreateDTO.getStickerColor())
                 .stickerShape(stickerCreateDTO.getStickerShape())
@@ -43,18 +121,19 @@ public class StickerService {
                 .week(currentWeek)
                 .member(member)
                 .build();
-        return stickerRepository.save(sticker);
+        stickerRepository.save(sticker);
+        return StickerPreviewResDto.toDto(sticker);
     }
 
-    // entity를 StickerCreateDTO로 변환
-    public StickerCreateDTO convertToCreateDTO(Sticker sticker) {
-        return StickerCreateDTO.builder()
-                .title(sticker.getTitle())
-                .build();
+    // 단일 스티커 조회 메소드 - 내 것인지 상대 것인지 확인함
+    public StickerDetailResDto getSticker(Long stickerId){
+        Sticker sticker = validationService.valSticker(stickerId);
+        Member currentMember = memberService.getCurrentMember();
+        return StickerDetailResDto.toDto(sticker, sticker.getMember() == currentMember);
     }
 
-    // 스티커 UPDATE 메소드 (제목, 메모, 느낀점)
-    public Sticker updateSticker(StickerUpdateReqDTO stickerUpdateDTO) {
+    // 단일 스티커 UPDATE 메소드 (제목, 메모, 느낀점)
+    public StickerDetailResDto updateSticker(StickerUpdateReqDTO stickerUpdateDTO) {
         Member currentMember = memberService.getCurrentMember();
         // 스티커 id로 스티커를 찾음
         Sticker sticker = validationService.valSticker(stickerUpdateDTO.getId());
@@ -70,16 +149,8 @@ public class StickerService {
             sticker.setImpression(stickerUpdateDTO.getImpression());
             sticker.setImpressionTime(LocalDate.now());
         }
-        return stickerRepository.save(sticker);
-    }
-
-    // entity를 StickerUpdateReqTO로 변환
-    public StickerUpdateReqDTO convertToUpdateDTO(Sticker sticker) {
-        return StickerUpdateReqDTO.builder()
-                .title(sticker.getTitle())
-                .content(sticker.getContent())
-                .impression(sticker.getImpression())
-                .build();
+        stickerRepository.save(sticker);
+        return StickerDetailResDto.toDto(sticker, sticker.getMember() == currentMember);
     }
 
     // 스티커 DELETE 메소드
@@ -92,42 +163,4 @@ public class StickerService {
         weekService.updateStickerCountOfCurrentWeek(-1L);
         stickerRepository.delete(sticker);
     }
-
-    // 단일 스티커 조회 메소드 - 내 것인지 상대 것인지 확인함
-    public StickerDetailResDto getSticker(Long stickerId){
-        Sticker sticker = validationService.valSticker(stickerId);
-        Member currentMember = memberService.getCurrentMember();
-        StickerDetailResDto stickerMyResDto = StickerDetailResDto.builder()
-                .id(stickerId)
-                .title(sticker.getTitle())
-                .content(sticker.getContent())
-                .impression(sticker.getImpression())
-                .impressionTime(sticker.getImpressionTime().toString())
-                .isMine(null)
-                .build();
-        stickerMyResDto.setIsMine(sticker.getMember() == currentMember);
-        return stickerMyResDto;
-    }
-
-    // 이번 주 스티커 미리보기로 조회 메소드
-    public List<StickerPreviewResDto> getStickersForAWeek(Member member) {
-        Week week = weekService.getCurrentWeek(member);
-        List<Sticker> stickerList = stickerRepository.findAllByWeek(week);
-        List<StickerPreviewResDto> stickerPreviewDtos = new ArrayList<>();
-        for (Sticker sticker : stickerList) {
-            String impression = sticker.getImpression();
-            StickerPreviewResDto previewDto = StickerPreviewResDto.builder()
-                    .id(sticker.getId())
-                    .title(sticker.getTitle())
-                    .stickerColor(sticker.getStickerColor())
-                    .stickerShape(sticker.getStickerShape())
-                    .stickerTop(sticker.getStickerTop())
-                    .stickerLeft(sticker.getStickerLeft())
-                    .build();
-            stickerPreviewDtos.add(previewDto);
-        }
-        return stickerPreviewDtos;
-    }
-
-    // TODO: 컨트롤러 작성하며 프로필에서 여정, 주, 스티커 조회 방식 고민 필요
 }

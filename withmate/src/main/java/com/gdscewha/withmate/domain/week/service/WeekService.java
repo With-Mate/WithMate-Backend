@@ -27,7 +27,7 @@ public class WeekService {
         if (journey == null)
             throw new WeekException(ErrorCode.JOURNEY_NOT_FOUND);
         Week week = Week.builder()
-                .weekNum(journey.getWeekCount() + 1) // 처음에 1L
+                .weekNum(journey.getWeekCount()) // 처음에 1L (위에서 업데이트)
                 .weekStartDate(LocalDate.now())
                 .stickerCount(0L) // 처음에 0L
                 .journey(journey)
@@ -39,7 +39,7 @@ public class WeekService {
     public Week updateStickerCountOfCurrentWeek(Long diff){
         Member member = memberService.getCurrentMember();
         Week week = getCurrentWeek(member);
-        if(week == null)
+        if (week == null)
             throw new WeekException(ErrorCode.WEEK_NOT_FOUND);
         Long newStickerCount = week.getStickerCount() + diff;
         if (newStickerCount < 0)
@@ -58,7 +58,7 @@ public class WeekService {
     public List<Week> getAllWeeksByJourney(Journey journey){
         List<Week> weekList = weekRepository.findAllByJourney(journey);
         if (weekList == null || weekList.isEmpty())
-            return null;
+            throw new WeekException(ErrorCode.WEEK_NOT_FOUND);
         return weekList;
     }
 

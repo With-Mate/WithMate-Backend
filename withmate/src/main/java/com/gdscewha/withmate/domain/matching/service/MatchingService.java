@@ -1,8 +1,8 @@
 package com.gdscewha.withmate.domain.matching.service;
 
-import com.gdscewha.withmate.common.response.exception.CategoryException;
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
 import com.gdscewha.withmate.common.response.exception.MatchingException;
+import com.gdscewha.withmate.domain.journey.service.JourneyService;
 import com.gdscewha.withmate.domain.matching.dto.MatchedResultDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingInputDto;
 import com.gdscewha.withmate.domain.matching.dto.MatchingResDto;
@@ -15,7 +15,10 @@ import com.gdscewha.withmate.domain.memberrelation.service.MemberRelationService
 import com.gdscewha.withmate.domain.model.Category;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import com.gdscewha.withmate.domain.relation.service.RelationMateService;
+import com.gdscewha.withmate.domain.week.service.WeekService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchingService {
@@ -33,7 +37,9 @@ public class MatchingService {
     private final MemberService memberService;
     private final MemberRelationService memberRelationService;
     private final RelationMateService relationMateService;
-
+    // Relation 만들 때 필요한 Service들
+    private final JourneyService journeyService;
+    private final WeekService weekService;
 
     // 내 매칭 받아오기 (MatchingResDto 반환, 존재하지 않으면 null 반환)
     public MatchingInputDto getCurrentMatchingDto() {
@@ -55,6 +61,8 @@ public class MatchingService {
     // 내 매칭을 생성 혹은 기존 매칭 업데이트
     public Matching createOrUpdateMatching(MatchingInputDto reqDto) {
         Member member = memberService.getCurrentMember();
+        if (member.getIsRelationed())
+            return null;
         if (member.getMatching() == null) {
             // 매칭한 적 없을 때 생성
             return createMatching(member, reqDto);
@@ -96,18 +104,17 @@ public class MatchingService {
         return "취소할 Matching이 없습니다.";
     }
 
-    // 매칭 삭제
-    public Member deleteMatching(Member member) {
-        if (member.getMatching() != null) {
-            matchingRepository.delete(member.getMatching());
-            member.setMatching(null);
-            memberRepository.save(member);
-        }
-        return member;
+    // 특정 카테고리의 매칭중인 사람 1명을 반환
+    public MatchingResDto getMatchingByCategory(Category category) {
+        List<Matching> matchingList = matchingRepository.findAllByCategory(category);
+        if (matchingList == null || matchingList.isEmpty())
+            return null;
+        Member member = memberRepository.findMemberByMatching(matchingList.get(0));
+        return new MatchingResDto(matchingList.get(0), member);
     }
 
     // 모든 카테고리의 매칭중인 사람들을 조회
-    public List<MatchingResDto> getPeopleMatching() {
+    public List<MatchingResDto> getCurrentMatchingList() {
         Category[] categories = Category.values();
         List<MatchingResDto> matchingResList = new ArrayList<>();
         for (Category c : categories) {
@@ -127,50 +134,56 @@ public class MatchingService {
 
     // tryMatching로부터 생성되는 매칭 결과를 컨트롤러에 반환
     public MatchedResultDto getMatchedResult(MatchingInputDto reqDto) {
-        Matching myMatching = createOrUpdateMatching(reqDto);   // 내 매칭 생성
-        List<Matching> matchingList = relateMatesByCategory(reqDto.getCategory(), myMatching);  // 카테고리로 Mates 관계 맺기
-        return new MatchedResultDto(matchingList);
+        Pair<Matching, Matching> matchingPair = relateMatesByCategory(reqDto.getCategory(), reqDto); // 카테고리로 Mates 관계 맺기
+        if (matchingPair == null)
+            return null;
+        return new MatchedResultDto(matchingPair);
     }
 
     // Matching으로 Mates 관계 맺기
     @Transactional
-    public List<Matching> relateMatesByCategory(Category category, Matching myMatching) {
-        if (category == null)
-            throw new CategoryException(ErrorCode.CATEGORY_NOT_FOUND);
+    public Pair<Matching, Matching> relateMatesByCategory(Category category, MatchingInputDto reqDto) {
+        Member me = memberService.getCurrentMember();
+        if (me.getIsRelationed()) {
+            log.info("멤버: 메이트 관계가 있는 사람이 있음");
+            return null;
+        }
+        if (me.getMatching() != null){
+            log.info("멤버: 매칭 대기 중");
+            return null;
+        }
         // 같은 카테고리의 Matching 리스트
         List<Matching> matchingList = matchingRepository.findAllByCategory(category);
-        // matchingList에 2개 이상이어야 매칭 가능
-        if (matchingList.size() >= 2){
+        // matchingList에 1개 이상이어야 매칭 가능 (내 매칭은 db에 저장하지 않음)
+        if (matchingList.size() >= 1){
             Matching mateMatching = matchingList.get(0);
             Member mate = memberRepository.findMemberByMatching(mateMatching);
-            Member me = memberService.getCurrentMember();
-            // mate 탈퇴시 matching도 삭제되므로 유효한 멤버
-
-            List<Matching> mateList = new ArrayList<>(); // 메이트 리스트
-            mateList.add(mateMatching);
-            mateList.add(myMatching);
-            List<Member> memberList = new ArrayList<>();
-            memberList.add(mate);
-            memberList.add(me);
+            if (mate == null || mateMatching == null)
+                throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+            Matching myMatching = Matching.builder() // 내 매칭 생성 (DB에 저장 X)
+                    .goal(reqDto.getGoal())
+                    .category(reqDto.getCategory())
+                    .member(me)
+                    .build();
+            Pair<Matching, Matching> matchingPair = Pair.of(mateMatching, myMatching);
+            Pair<Member, Member> memberPair = Pair.of(mate, me);
 
             // Relation 생성, MemberRelationPair 생성
-            Relation pairRelation = relationMateService.createRelation();
-            memberRelationService.createMemberRelationPair(mateList, memberList, pairRelation);
-            // Matching 삭제
-            //matchingRepository.deleteAll(matchingList);
+            Relation relation = relationMateService.createRelation();
+            memberRelationService.createMemberRelationPair(matchingPair, memberPair, relation);
 
+            // 첫번째 Journey 생성
+            journeyService.createJourney(relation);
+            // 첫번째 Week 생성
+            weekService.createWeek();
             // Member들의 isRelationed를 true로 업데이트 후 저장
             mate.setIsRelationed(true);
             me.setIsRelationed(true);
-
-            // 각 멤버에 Matching null로
-            memberRepository.save(deleteMatching(mate));
-            memberRepository.save(deleteMatching(me));
-            // 수정된 Matching 리스트 반환
-            return mateList;
-        } else {
-            throw new MatchingException(ErrorCode.MATCHING_NOT_FOUND);
+            // Mate의 매칭 삭제
+            matchingRepository.delete(mateMatching);
+            return matchingPair;
         }
+        return null;
     }
 
 }

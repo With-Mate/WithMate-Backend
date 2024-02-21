@@ -1,4 +1,5 @@
 package com.gdscewha.withmate.domain.relation.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelationReportDto {
-    // 신고자 정보
-    private String myName;
+public class RelationProfileDto {
+    // 내 정보
+    private String nickname1;
+    private String goal1;
     // 상대방 정보
-    private String mateName;
-    private String reason; // ""로 전달 후 내용 받을 예정
+    private String nickname2;
+    private String goal2;
 }

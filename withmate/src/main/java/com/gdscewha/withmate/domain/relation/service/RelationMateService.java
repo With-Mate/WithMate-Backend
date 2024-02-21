@@ -1,7 +1,9 @@
 package com.gdscewha.withmate.domain.relation.service;
 
 import com.gdscewha.withmate.common.response.exception.ErrorCode;
+import com.gdscewha.withmate.common.response.exception.JourneyException;
 import com.gdscewha.withmate.common.response.exception.MemberRelationException;
+import com.gdscewha.withmate.domain.journey.entity.Journey;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.service.MemberService;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -52,7 +56,7 @@ public class RelationMateService {
         Member member = memberService.getCurrentMember();
         Relation relation = getCurrentRelation(member);
         if (relation == null)
-            throw new MemberRelationException(ErrorCode.RELATION_NOT_FOUND);
+            return null;
         mRService.endIsRelationedOfMembers(relation);
         relation.setEndDate(LocalDate.now());
         relation.setIsProceed(false);
@@ -98,11 +102,19 @@ public class RelationMateService {
 
         return RelationManageDto.builder()
                 .startDate(relation.getStartDate().toString())
-                .proceedingTime(daysDifference)
+                .proceedingTime(daysDifference + 1) // 차이에서 하루를 더한 날짜
                 .myMessage(myMR.getMessage())
                 .mateName(mateMR.getMember().getNickname())
                 .mateCategory(mateMR.getCategory().toString())
                 .mateMessage(mateMR.getMessage())
                 .build();
     }
+
+    // N번째 MR의 Relation을 반환한다
+    /*public Relation getRelationOfNthMR(Member member, Long index) {
+        MemberRelation memberRelation = mRService.findNthMROfMember(member, index);
+        if (memberRelation == null)
+            return null;
+        return memberRelation.getRelation();
+    }*/
 }

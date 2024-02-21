@@ -5,10 +5,12 @@ import com.gdscewha.withmate.common.response.exception.MemberRelationException;
 import com.gdscewha.withmate.domain.matching.entity.Matching;
 import com.gdscewha.withmate.domain.member.entity.Member;
 import com.gdscewha.withmate.domain.member.repository.MemberRepository;
+import com.gdscewha.withmate.domain.memberrelation.dto.MRUpdateDto;
 import com.gdscewha.withmate.domain.memberrelation.entity.MemberRelation;
 import com.gdscewha.withmate.domain.memberrelation.repository.MemberRelationRepository;
 import com.gdscewha.withmate.domain.relation.entity.Relation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,42 +25,48 @@ public class MemberRelationService {
     // Member의 모든 MR을 반환한다
     public List<MemberRelation> findAllMROfMember(Member member) {
         List<MemberRelation> mRList = mRRepository.findAllByMember(member);
-        if (mRList != null && !mRList.isEmpty()) {
-            return mRList;
-        }
-        return null; // 찾지 못했음
+        if (mRList == null || mRList.isEmpty())
+            return null;
+        return mRList; // 찾지 못했음
     }
+
+    // Member의 N번째 MR을 반환한다
+    /*public MemberRelation findNthMROfMember(Member member, Long index) {
+        List<MemberRelation> mRList = mRRepository.findAllByMember(member);
+        if (mRList == null || mRList.isEmpty())
+            return null;
+        if (index == null)
+            return mRList.get(mRList.size() - 1);
+        if (index > mRList.size())
+            return null;
+        return mRList.get(index.intValue());
+    }*/
 
     // Member에게 가장 최신인 MR 하나를 반환한다
     public MemberRelation findLastMROfMember(Member member) {
-        List<MemberRelation> mRList = findAllMROfMember(member);
-        if (mRList == null) {
+        List<MemberRelation> mRList = mRRepository.findAllByMember(member);
+        if (mRList == null || mRList.isEmpty())
             return null;
-        }
         MemberRelation lastMR = mRList.get(mRList.size() - 1);
-        if (lastMR.getRelation().getIsProceed() == true) { // 지속중이라면
-            return lastMR;
-        }
-        return null; // 찾지 못했음
+        if (!lastMR.getRelation().getIsProceed())
+            return null;
+        return lastMR;
     }
 
     // MR 두 개 만들고 저장, 두 Member의 isRelationed는 MatchingService에서 바꿔줌
-    public void createMemberRelationPair(List<Matching> matchingList, List<Member> memberList, Relation relation){
-        Matching matching1 = matchingList.get(0);
-        Matching matching2 = matchingList.get(1);
-        
+    public void createMemberRelationPair(Pair<Matching, Matching> matchingPair, Pair<Member, Member> memberPair, Relation relation){
         MemberRelation myMR = MemberRelation.builder()
-                .goal(matching1.getGoal())
-                .category(matching1.getCategory())
+                .goal(matchingPair.getFirst().getGoal())
+                .category(matchingPair.getFirst().getCategory())
                 // message is nullable
-                .member(memberList.get(0))
+                .member(memberPair.getFirst())
                 .relation(relation)
                 .build();
         MemberRelation mateMR = MemberRelation.builder()
-                .goal(matching2.getGoal())
-                .category(matching2.getCategory())
+                .goal(matchingPair.getSecond().getGoal())
+                .category(matchingPair.getSecond().getCategory())
                 // message is nullable
-                .member(memberList.get(1))
+                .member(memberPair.getSecond())
                 .relation(relation)
                 .build();
         mRRepository.save(myMR);
@@ -94,19 +102,30 @@ public class MemberRelationService {
     }
 
     // Member의 Goal 업데이트
-    public MemberRelation updateMRGoal(Member member, String newGoal) {
+    public MRUpdateDto updateMRGoal(Member member, String newGoal) {
         MemberRelation memberRelation = findLastMROfMember(member);
         if (memberRelation == null)
             throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
         memberRelation.setGoal(newGoal);
-        return mRRepository.save(memberRelation);
+        mRRepository.save(memberRelation);
+        return MRUpdateDto.builder()
+                .nickname(memberRelation.getMember().getNickname())
+                .goal(newGoal)
+                .message(memberRelation.getMessage())
+                .build();
     }
+
     // Member의 Message 업데이트
-    public MemberRelation updateMRMessage(Member member, String newMessage) {
+    public MRUpdateDto updateMRMessage(Member member, String newMessage) {
         MemberRelation memberRelation = findLastMROfMember(member);
         if (memberRelation == null)
             throw new MemberRelationException(ErrorCode.MEMBERRELATION_NOT_FOUND);
         memberRelation.setMessage(newMessage);
-        return mRRepository.save(memberRelation);
+        mRRepository.save(memberRelation);
+        return MRUpdateDto.builder()
+                .nickname(memberRelation.getMember().getNickname())
+                .goal(memberRelation.getGoal())
+                .message(newMessage)
+                .build();
     }
 }
